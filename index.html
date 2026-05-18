@@ -482,7 +482,9 @@ img{display:block;}
 <script>
 // ══ CONFIG ══
 const CFG_KEY = 'fleet_api_url_v2';
-let API_URL = localStorage.getItem(CFG_KEY) || '';
+// ── ใส่ URL ของ Apps Script ตรงนี้เลย ทุกเครื่องจะใช้ได้ทันทีโดยไม่ต้องกรอก ──
+const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbxWycHIRlYt2MPattFyi0k3pX-ZZSdB08g-J1wRCvGtCryFtJv2fJpD9xVXCCnGMH79/exec';
+let API_URL = localStorage.getItem(CFG_KEY) || DEFAULT_API_URL;
 let db = { cars:[], members:[], bookings:[], miles:[], easypass:[], waitlist:[] };
 let selBook=null, selMile=null, adminMileCar=null, adminEpCar=null;
 
