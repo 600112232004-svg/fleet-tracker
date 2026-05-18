@@ -201,6 +201,7 @@ img{display:block;}
       <button class="tab"           onclick="go('mile')">เลขไมล์</button>
       <button class="tab"           onclick="go('ep')">Easy Pass</button>
       <button class="tab"           onclick="go('bookings')">รายการจอง</button>
+      <button class="tab"           onclick="go('history')">📋 ประวัติ</button>
       <button class="tab admin-tab" onclick="go('admin')">⚙ Admin</button>
     </div>
   </div>
@@ -278,6 +279,59 @@ img{display:block;}
 <div class="page" id="page-bookings">
   <div class="slabel" style="margin-top:4px">// รายการจองทั้งหมด</div>
   <div id="all-bookings"></div>
+</div>
+
+<!-- ══ HISTORY ══ -->
+<div class="page" id="page-history">
+  <div class="slabel" style="margin-top:4px">// ประวัติการใช้งานทั้งหมด</div>
+
+  <!-- FILTERS -->
+  <div class="fcard" style="padding:14px 16px;margin-bottom:14px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div>
+        <label class="flbl">จากวันที่</label>
+        <input class="finput" id="hist-from" type="date">
+      </div>
+      <div>
+        <label class="flbl">ถึงวันที่</label>
+        <input class="finput" id="hist-to" type="date">
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
+      <div>
+        <label class="flbl">รถ</label>
+        <select class="finput" id="hist-car" style="font-size:13px">
+          <option value="">ทั้งหมด</option>
+        </select>
+      </div>
+      <div>
+        <label class="flbl">ทีม</label>
+        <select class="finput" id="hist-team" style="font-size:13px">
+          <option value="">ทั้งหมด</option>
+        </select>
+      </div>
+      <div>
+        <label class="flbl">ประเภท</label>
+        <select class="finput" id="hist-type" style="font-size:13px">
+          <option value="">ทั้งหมด</option>
+          <option value="booking">การจอง</option>
+          <option value="mile">เลขไมล์</option>
+          <option value="easypass">Easy Pass</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="submit-btn" style="margin-top:0;flex:1" onclick="renderHistory()">🔍 ค้นหา</button>
+      <button onclick="exportCSV()" style="padding:10px 14px;border:1px solid var(--bdr);border-radius:8px;background:none;font-size:13px;font-weight:500;white-space:nowrap;">📥 CSV</button>
+      <button onclick="exportPDF()" style="padding:10px 14px;border:1px solid var(--bdr);border-radius:8px;background:none;font-size:13px;font-weight:500;white-space:nowrap;">🖨 PDF</button>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div id="hist-summary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;"></div>
+
+  <!-- TABLE -->
+  <div id="hist-table"></div>
 </div>
 
 <!-- ══ ADMIN ══ -->
@@ -1328,8 +1382,9 @@ function go(name) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
   document.getElementById('page-'+name).classList.add('on');
-  document.querySelectorAll('.tab')[{status:0,book:1,mile:2,ep:3,bookings:4,admin:5}[name]].classList.add('on');
+  document.querySelectorAll('.tab')[{status:0,book:1,mile:2,ep:3,bookings:4,history:5,admin:6}[name]].classList.add('on');
   if (name==='book') renderPicks();
+  if (name==='history') initHistory();
 }
 
 // ══ TOAST ══
@@ -1344,7 +1399,251 @@ function showToast(id, msg, isOk) {
   setTimeout(() => el.className = 'toast', 3500);
 }
 
-// ══ INIT ══
+// ══ HISTORY ══
+function initHistory() {
+  // ตั้งค่า default วันที่ = เดือนนี้
+  const now = new Date();
+  const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0,10);
+  const lastDay  = new Date(now.getFullYear(), now.getMonth()+1, 0).toISOString().slice(0,10);
+  if (!document.getElementById('hist-from').value) document.getElementById('hist-from').value = firstDay;
+  if (!document.getElementById('hist-to').value)   document.getElementById('hist-to').value   = lastDay;
+
+  // populate car dropdown
+  const carSel = document.getElementById('hist-car');
+  carSel.innerHTML = '<option value="">ทั้งหมด</option>' +
+    db.cars.map(c=>`<option value="${c.id}">${c.name} (${c.plate})</option>`).join('');
+
+  // populate team dropdown
+  const teams = [...new Set([
+    ...db.bookings.map(b=>b.team),
+    ...db.miles.map(m=>m.team),
+    ...db.easypass.map(e=>e.note||''),
+    ...db.members.map(m=>m.team),
+  ].filter(Boolean))].sort();
+  const teamSel = document.getElementById('hist-team');
+  teamSel.innerHTML = '<option value="">ทั้งหมด</option>' +
+    teams.map(t=>`<option value="${t}">${t}</option>`).join('');
+
+  renderHistory();
+}
+
+function getHistoryRows() {
+  const from = document.getElementById('hist-from').value;
+  const to   = document.getElementById('hist-to').value;
+  const carF  = document.getElementById('hist-car').value;
+  const teamF = document.getElementById('hist-team').value;
+  const typeF = document.getElementById('hist-type').value;
+
+  const toEnd = to ? to + 'T23:59:59' : null;
+
+  let rows = [];
+
+  // การจอง
+  if (!typeF || typeF==='booking') {
+    db.bookings.forEach(b => {
+      const car = db.cars.find(c=>c.id===b.carId);
+      const ts  = b.ts || b.start;
+      if (from && ts < from) return;
+      if (toEnd && ts > toEnd) return;
+      if (carF && b.carId !== carF) return;
+      if (teamF && b.team !== teamF) return;
+      rows.push({
+        ts, type:'booking',
+        typeTh:'การจอง',
+        car: car?.name||'—',
+        plate: car?.plate||'—',
+        team: b.team,
+        detail: `${b.mission} · ${fdate(b.start)} → ${fdate(b.end)} · ${b.headcount} คน`,
+        value: '', unit:'',
+        status: b.status==='active'?'กำลังใช้':b.status==='done'?'เสร็จแล้ว':'ยกเลิก',
+      });
+    });
+  }
+
+  // เลขไมล์
+  if (!typeF || typeF==='mile') {
+    db.miles.forEach(m => {
+      const car = db.cars.find(c=>c.id===m.carId);
+      const ts  = m.ts;
+      if (from && ts < from) return;
+      if (toEnd && ts > toEnd) return;
+      if (carF && m.carId !== carF) return;
+      if (teamF && m.team !== teamF) return;
+      rows.push({
+        ts, type:'mile',
+        typeTh:'เลขไมล์',
+        car: car?.name||'—',
+        plate: car?.plate||'—',
+        team: m.team,
+        detail: m.note||'—',
+        value: km(m.miles), unit:'กม.',
+        status:'',
+      });
+    });
+  }
+
+  // Easy Pass
+  if (!typeF || typeF==='easypass') {
+    db.easypass.forEach(e => {
+      const car = db.cars.find(c=>c.id===e.carId);
+      const ts  = e.ts;
+      if (from && ts < from) return;
+      if (toEnd && ts > toEnd) return;
+      if (carF && e.carId !== carF) return;
+      if (teamF) return; // easypass ไม่มี team field ข้ามไป
+      rows.push({
+        ts, type:'easypass',
+        typeTh: e.type==='topup'?'Easy Pass เติม':'Easy Pass ใช้',
+        car: car?.name||'—',
+        plate: car?.plate||'—',
+        team: '—',
+        detail: e.note||'—',
+        value: thb(e.amount), unit: e.type==='topup'?'เติม':'ใช้',
+        status:'',
+      });
+    });
+  }
+
+  return rows.sort((a,b) => new Date(b.ts)-new Date(a.ts));
+}
+
+function renderHistory() {
+  const rows = getHistoryRows();
+
+  // summary
+  const bookCount = rows.filter(r=>r.type==='booking').length;
+  const mileCount = rows.filter(r=>r.type==='mile').length;
+  const epTotal   = db.easypass
+    .filter(e => {
+      const from=document.getElementById('hist-from').value;
+      const to=document.getElementById('hist-to').value;
+      const carF=document.getElementById('hist-car').value;
+      if (from&&e.ts<from) return false;
+      if (to&&e.ts>to+'T23:59:59') return false;
+      if (carF&&e.carId!==carF) return false;
+      return true;
+    })
+    .reduce((s,e)=>s+(e.type==='topup'?+e.amount:-+e.amount),0);
+
+  document.getElementById('hist-summary').innerHTML = `
+    <div style="background:var(--okb);border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:20px;font-weight:600;color:var(--ok)">${bookCount}</div>
+      <div style="font-size:11px;color:var(--ok)">รายการจอง</div>
+    </div>
+    <div style="background:var(--byb);border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:20px;font-weight:600;color:var(--by)">${mileCount}</div>
+      <div style="font-size:11px;color:var(--by)">บันทึกเลขไมล์</div>
+    </div>
+    <div style="background:var(--epb);border-radius:8px;padding:12px;text-align:center">
+      <div style="font-size:20px;font-weight:600;color:var(--ep)">${thb(epTotal)}</div>
+      <div style="font-size:11px;color:var(--ep)">ยอด Easy Pass</div>
+    </div>`;
+
+  // table
+  const el = document.getElementById('hist-table');
+  if (!rows.length) { el.innerHTML='<div class="empty">ไม่พบข้อมูลในช่วงที่เลือก</div>'; return; }
+
+  const typeColor = { booking:'var(--by)', mile:'var(--ok)', easypass:'var(--ep)' };
+  el.innerHTML = `<div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;">` +
+    rows.map((r,i) => `
+    <div style="display:flex;align-items:flex-start;gap:10px;padding:11px 14px;${i>0?'border-top:1px solid var(--bdr)':''}">
+      <div style="flex-shrink:0;margin-top:2px">
+        <span style="font-size:10px;font-family:var(--mono);font-weight:600;padding:2px 7px;border-radius:4px;background:${typeColor[r.type]}22;color:${typeColor[r.type]}">${r.typeTh}</span>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500">${r.car} <span style="font-family:var(--mono);font-size:10px;color:var(--mut)">${r.plate}</span></div>
+        <div style="font-size:12px;color:var(--mut);margin-top:2px">${r.team} · ${r.detail}</div>
+        ${r.status?`<span style="font-size:10px;font-family:var(--mono);color:var(--mut)">${r.status}</span>`:''}
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        ${r.value?`<div style="font-family:var(--mono);font-size:13px;font-weight:500">${r.value}</div>`:''}
+        <div style="font-size:11px;color:var(--mut);font-family:var(--mono)">${fts(r.ts)}</div>
+      </div>
+    </div>`).join('') + '</div>';
+}
+
+// ══ EXPORT CSV ══
+function exportCSV() {
+  const rows = getHistoryRows();
+  if (!rows.length) { alert('ไม่มีข้อมูลในช่วงที่เลือก'); return; }
+  const headers = ['วันที่','ประเภท','รถ','ทะเบียน','ทีม','รายละเอียด','ค่า','สถานะ'];
+  const lines = [
+    headers.join(','),
+    ...rows.map(r => [
+      fts(r.ts), r.typeTh, r.car, r.plate, r.team,
+      '"'+r.detail.replace(/"/g,'""')+'"',
+      r.value, r.status
+    ].join(','))
+  ];
+  const blob = new Blob(['\uFEFF'+lines.join('\n')], { type:'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  const from = document.getElementById('hist-from').value || 'all';
+  const to   = document.getElementById('hist-to').value   || 'all';
+  a.download = `fleet-history-${from}-${to}.csv`;
+  a.click();
+}
+
+// ══ EXPORT PDF ══
+function exportPDF() {
+  const rows = getHistoryRows();
+  if (!rows.length) { alert('ไม่มีข้อมูลในช่วงที่เลือก'); return; }
+  const from = document.getElementById('hist-from').value;
+  const to   = document.getElementById('hist-to').value;
+  const typeColor = { booking:'#1a4a8a', mile:'#1a7a4a', easypass:'#5b21b6' };
+
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <style>
+    body{font-family:sans-serif;font-size:12px;color:#1a1916;padding:20px;}
+    h1{font-size:16px;margin-bottom:4px;}
+    .sub{font-size:11px;color:#888;margin-bottom:16px;}
+    .summary{display:flex;gap:12px;margin-bottom:16px;}
+    .scard{padding:8px 14px;border-radius:6px;text-align:center;flex:1;}
+    table{width:100%;border-collapse:collapse;font-size:11px;}
+    th{background:#f0efe9;padding:6px 8px;text-align:left;border-bottom:1px solid #e0dfd8;}
+    td{padding:6px 8px;border-bottom:1px solid #f0efe9;}
+    .pill{font-size:10px;padding:2px 6px;border-radius:3px;font-weight:600;}
+    @media print{body{padding:0}button{display:none}}
+  </style></head><body>
+  <button onclick="window.print()" style="margin-bottom:12px;padding:6px 14px;cursor:pointer">🖨 พิมพ์ / บันทึก PDF</button>
+  <h1>ประวัติการใช้งานรถ</h1>
+  <div class="sub">ช่วงวันที่: ${fdate(from)} — ${fdate(to)} · ออกรายงาน ${fts(new Date().toISOString())}</div>
+  <div class="summary">
+    <div class="scard" style="background:#e8f5ee;color:#1a7a4a">
+      <div style="font-size:18px;font-weight:600">${rows.filter(r=>r.type==='booking').length}</div>
+      <div>รายการจอง</div>
+    </div>
+    <div class="scard" style="background:#e8f0fe;color:#1a4a8a">
+      <div style="font-size:18px;font-weight:600">${rows.filter(r=>r.type==='mile').length}</div>
+      <div>บันทึกเลขไมล์</div>
+    </div>
+    <div class="scard" style="background:#ede9fe;color:#5b21b6">
+      <div style="font-size:18px;font-weight:600">${rows.filter(r=>r.type==='easypass').length}</div>
+      <div>Easy Pass</div>
+    </div>
+  </div>
+  <table>
+    <thead><tr><th>วันที่</th><th>ประเภท</th><th>รถ</th><th>ทีม</th><th>รายละเอียด</th><th>ค่า</th><th>สถานะ</th></tr></thead>
+    <tbody>
+    ${rows.map(r=>`<tr>
+      <td style="font-family:monospace;white-space:nowrap">${fts(r.ts)}</td>
+      <td><span class="pill" style="background:${typeColor[r.type]}22;color:${typeColor[r.type]}">${r.typeTh}</span></td>
+      <td>${r.car}<br><span style="color:#888;font-size:10px">${r.plate}</span></td>
+      <td>${r.team}</td>
+      <td>${r.detail}</td>
+      <td style="font-family:monospace">${r.value}</td>
+      <td>${r.status}</td>
+    </tr>`).join('')}
+    </tbody>
+  </table>
+  </body></html>`;
+
+  const w = window.open('','_blank');
+  w.document.write(html);
+  w.document.close();
+}
+
+
 document.querySelectorAll('.modal-bg').forEach(bg => {
   bg.addEventListener('click', e => { if (e.target===bg) bg.classList.remove('show'); });
 });
