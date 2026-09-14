@@ -2,681 +2,1011 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f6f5f1">
 <title>Fleet Manager</title>
-<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+/* ═══════════════════════════════════════════════
+   DESIGN TOKENS
+   ═══════════════════════════════════════════════ */
 :root{
-  --bg:#f5f4f0;--sur:#fff;--sur2:#f0efe9;--bdr:#e0dfd8;
-  --txt:#1a1916;--mut:#888580;
-  --ok:#1a7a4a;--okb:#e8f5ee;--okbd:#b4ddc5;
-  --wn:#8a5f00;--wnb:#fef7e0;--wnbd:#f0d080;
-  --dn:#c0392b;--dnb:#fdecea;--dnbd:#f5b8b3;
-  --by:#1a4a8a;--byb:#e8f0fe;--bybd:#a8c4f0;
-  --ep:#5b21b6;--epb:#ede9fe;--epbd:#c4b5fd;
-  --ad:#b45309;--adb:#fef3c7;--adbd:#fcd34d;
-  --mono:'IBM Plex Mono',monospace;--sans:'Sarabun',sans-serif;--r:10px;
+  --bg:#f6f5f1;
+  --surface:#ffffff;
+  --surface-2:#f1f0ea;
+  --surface-3:#e8e6dd;
+  --border:#e3e1d8;
+  --border-2:#d2cfc4;
+
+  --text:#1b1a17;
+  --text-2:#5f5c54;
+  --text-3:#918d84;
+
+  --ok:#0f7047;      --ok-bg:#e6f4ed;   --ok-bd:#a6d7bf;
+  --warn:#8a5800;    --warn-bg:#fdf3df; --warn-bd:#eecf88; --warn-solid:#d99000;
+  --danger:#b32a1e;  --danger-bg:#fdecea;--danger-bd:#f1b4ae;
+  --info:#1a4b8f;    --info-bg:#e9f0fd; --info-bd:#a9c5f1;
+  --violet:#5a25b0;  --violet-bg:#eee9fd;--violet-bd:#c5b4fb;
+  --amber:#9c5606;   --amber-bg:#fdf0d9;--amber-bd:#f2c877;
+
+  --accent:#1b1a17;
+  --accent-fg:#ffffff;
+
+  --sh-1:0 1px 2px rgba(24,22,16,.05);
+  --sh-2:0 2px 10px -4px rgba(24,22,16,.14), 0 1px 2px rgba(24,22,16,.04);
+  --sh-3:0 18px 48px -16px rgba(24,22,16,.32);
+
+  --r-sm:8px; --r:12px; --r-lg:16px; --r-xl:22px;
+  --mono:'IBM Plex Mono', ui-monospace, monospace;
+  --sans:'Sarabun', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --nav-h:60px;
+  --safe-b:env(safe-area-inset-bottom, 0px);
 }
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#14130f; --surface:#1d1c18; --surface-2:#25231e; --surface-3:#2e2c26;
+    --border:#302e27; --border-2:#413e35;
+    --text:#f0eee7; --text-2:#a8a49a; --text-3:#7b776e;
+    --ok:#5fd39c;     --ok-bg:#10281e;    --ok-bd:#1e5340;
+    --warn:#f0c164;   --warn-bg:#2b2211;  --warn-bd:#5a4620; --warn-solid:#e0a63c;
+    --danger:#f38b80; --danger-bg:#2e1613;--danger-bd:#5e2a24;
+    --info:#84b1f5;   --info-bg:#111c2e;  --info-bd:#264068;
+    --violet:#b79bfa; --violet-bg:#1e1730;--violet-bd:#3d2d63;
+    --amber:#efb35e;  --amber-bg:#2b2011; --amber-bd:#5a4320;
+    --accent:#f0eee7; --accent-fg:#14130f;
+    --sh-1:0 1px 2px rgba(0,0,0,.4);
+    --sh-2:0 2px 10px -4px rgba(0,0,0,.55), 0 1px 2px rgba(0,0,0,.3);
+    --sh-3:0 18px 48px -16px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14130f; --surface:#1d1c18; --surface-2:#25231e; --surface-3:#2e2c26;
+  --border:#302e27; --border-2:#413e35;
+  --text:#f0eee7; --text-2:#a8a49a; --text-3:#7b776e;
+  --ok:#5fd39c;     --ok-bg:#10281e;    --ok-bd:#1e5340;
+  --warn:#f0c164;   --warn-bg:#2b2211;  --warn-bd:#5a4620; --warn-solid:#e0a63c;
+  --danger:#f38b80; --danger-bg:#2e1613;--danger-bd:#5e2a24;
+  --info:#84b1f5;   --info-bg:#111c2e;  --info-bd:#264068;
+  --violet:#b79bfa; --violet-bg:#1e1730;--violet-bd:#3d2d63;
+  --amber:#efb35e;  --amber-bg:#2b2011; --amber-bd:#5a4320;
+  --accent:#f0eee7; --accent-fg:#14130f;
+  --sh-1:0 1px 2px rgba(0,0,0,.4);
+  --sh-2:0 2px 10px -4px rgba(0,0,0,.55), 0 1px 2px rgba(0,0,0,.3);
+  --sh-3:0 18px 48px -16px rgba(0,0,0,.8);
+}
+
+/* ═══════════════════════════════════════════════
+   BASE
+   ═══════════════════════════════════════════════ */
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--txt);font-family:var(--sans);min-height:100vh;font-size:15px;}
-button,input,select,textarea{font-family:var(--sans);}
-button{cursor:pointer;}
-img{display:block;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:var(--sans);font-size:15px;line-height:1.6;
+  min-height:100vh;-webkit-font-smoothing:antialiased;
+  padding-bottom:calc(var(--nav-h) + var(--safe-b) + 12px);
+}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit;line-height:1.5;}
+button{cursor:pointer;background:none;border:none;}
+img{display:block;max-width:100%;}
+::selection{background:var(--info-bg);}
+:focus-visible{outline:2px solid var(--info);outline-offset:2px;border-radius:4px;}
 
-/* NAV */
-.nav{background:var(--sur);border-bottom:1px solid var(--bdr);position:sticky;top:0;z-index:200;}
-.nav-in{max-width:720px;margin:0 auto;padding:0 14px;display:flex;align-items:center;justify-content:space-between;height:50px;gap:8px;}
-.logo{font-family:var(--mono);font-size:12px;color:var(--mut);letter-spacing:.1em;flex-shrink:0;}
-.logo b{color:var(--txt);}
-.tabs{display:flex;gap:2px;background:var(--sur2);border-radius:8px;padding:3px;overflow-x:auto;scrollbar-width:none;}
-.tabs::-webkit-scrollbar{display:none;}
-.tab{padding:5px 10px;border-radius:6px;border:none;background:none;font-size:12px;color:var(--mut);font-weight:500;transition:all .15s;white-space:nowrap;}
-.tab.on{background:var(--sur);color:var(--txt);box-shadow:0 1px 3px rgba(0,0,0,.08);}
-.tab.admin-tab{color:var(--ad);}
-.tab.admin-tab.on{background:var(--adb);color:var(--ad);}
+.num{font-family:var(--mono);font-feature-settings:"tnum";letter-spacing:-.01em;}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px;}
 
-/* PAGES */
-.page{display:none;max-width:720px;margin:0 auto;padding:18px 14px 60px;}
-.page.on{display:block;}
-.slabel{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--mut);text-transform:uppercase;margin-bottom:10px;}
+/* ═══════════════════════════════════════════════
+   HEADER
+   ═══════════════════════════════════════════════ */
+.hdr{
+  background:color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter:saturate(180%) blur(14px);
+  -webkit-backdrop-filter:saturate(180%) blur(14px);
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:200;
+}
+.hdr-in{max-width:860px;margin:0 auto;padding:0 16px;height:56px;display:flex;align-items:center;gap:12px;}
+.brand{display:flex;align-items:center;gap:9px;flex-shrink:0;}
+.brand-mark{
+  width:28px;height:28px;border-radius:9px;background:var(--accent);color:var(--accent-fg);
+  display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;
+}
+.brand-txt{font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--text-3);font-weight:500;}
+.brand-txt b{color:var(--text);font-weight:600;}
+.hdr-sp{flex:1;}
+.hdr-btn{
+  width:36px;height:36px;border-radius:10px;border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+  color:var(--text-2);transition:.15s;flex-shrink:0;background:var(--surface);
+}
+.hdr-btn:hover{border-color:var(--border-2);color:var(--text);}
+.hdr-btn.on{background:var(--amber-bg);border-color:var(--amber-bd);color:var(--amber);}
+.spin{animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-/* LOADING */
-.lbar{height:2px;background:var(--ok);position:fixed;top:50px;left:0;right:0;z-index:300;display:none;animation:lp 1.5s ease-in-out infinite;}
-@keyframes lp{0%{opacity:.4}50%{opacity:1}100%{opacity:.4}}
+/* desktop tab row */
+.dtabs{display:none;gap:2px;background:var(--surface-2);border-radius:11px;padding:3px;}
+.dtab{padding:6px 13px;border-radius:8px;font-size:13px;color:var(--text-2);font-weight:500;transition:.15s;white-space:nowrap;}
+.dtab:hover{color:var(--text);}
+.dtab.on{background:var(--surface);color:var(--text);box-shadow:var(--sh-1);font-weight:600;}
+@media(min-width:761px){
+  .dtabs{display:flex;}
+  body{padding-bottom:48px;}
+  .btmnav{display:none!important;}
+}
+
+/* loading bar */
+.lbar{position:fixed;top:0;left:0;right:0;height:2px;z-index:400;overflow:hidden;display:none;}
 .lbar.show{display:block;}
+.lbar::after{content:'';position:absolute;inset:0;background:var(--info);
+  animation:lb 1.1s cubic-bezier(.4,0,.2,1) infinite;transform-origin:left;}
+@keyframes lb{0%{transform:translateX(-100%) scaleX(.4)}60%{transform:translateX(60%) scaleX(.7)}100%{transform:translateX(180%) scaleX(.3)}}
 
-/* CONFIG BANNER */
-.cfg-banner{background:var(--wnb);border:1px solid var(--wnbd);border-radius:var(--r);padding:14px 16px;margin-bottom:20px;}
-.cfg-banner h3{font-size:14px;font-weight:600;color:var(--wn);margin-bottom:6px;}
-.cfg-banner p{font-size:13px;color:var(--wn);margin-bottom:10px;}
+/* ═══════════════════════════════════════════════
+   BOTTOM NAV (mobile)
+   ═══════════════════════════════════════════════ */
+.btmnav{
+  position:fixed;left:0;right:0;bottom:0;z-index:200;
+  background:color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter:saturate(180%) blur(16px);
+  -webkit-backdrop-filter:saturate(180%) blur(16px);
+  border-top:1px solid var(--border);
+  padding-bottom:var(--safe-b);
+  display:flex;
+}
+.bn{
+  flex:1;height:var(--nav-h);display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:2px;color:var(--text-3);transition:color .15s;position:relative;
+}
+.bn-ic{font-size:19px;line-height:1;}
+.bn-lb{font-size:10px;font-weight:500;letter-spacing:.01em;}
+.bn.on{color:var(--text);}
+.bn.on .bn-lb{font-weight:600;}
+.bn.on::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:26px;height:2.5px;border-radius:0 0 3px 3px;background:var(--accent);}
+.bn-badge{
+  position:absolute;top:8px;left:calc(50% + 8px);min-width:16px;height:16px;padding:0 4px;
+  border-radius:9px;background:var(--danger);color:#fff;font-size:9px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;font-family:var(--mono);
+}
 
-/* CAR CARDS */
-.car-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
-.card{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;}
-.car-stripe{width:4px;flex-shrink:0;}
-.s-ok{background:var(--ok);}.s-warn{background:#e6a817;}.s-danger{background:var(--dn);}.s-busy{background:var(--by);}
-.car-body{flex:1;padding:14px 16px;}
-.car-r1{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:8px;}
-.car-name{font-size:15px;font-weight:600;}
-.car-sub{font-family:var(--mono);font-size:11px;color:var(--mut);margin-top:1px;}
-.pill{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;font-family:var(--mono);white-space:nowrap;}
-.p-ok{background:var(--okb);color:var(--ok);}.p-busy{background:var(--byb);color:var(--by);}
-.p-warn{background:var(--wnb);color:var(--wn);}.p-danger{background:var(--dnb);color:var(--dn);}
-.metrics{display:flex;gap:20px;margin-bottom:10px;flex-wrap:wrap;}
-.mval{font-family:var(--mono);font-size:20px;font-weight:500;line-height:1;}
-.mlbl{font-size:11px;color:var(--mut);margin-top:2px;}
-.prog{height:4px;background:var(--sur2);border-radius:2px;overflow:hidden;margin-bottom:4px;}
-.pf{height:100%;border-radius:2px;}
-.pf-ok{background:var(--ok);}.pf-warn{background:#e6a817;}.pf-danger{background:var(--dn);}
-.car-foot{font-size:11px;color:var(--mut);display:flex;justify-content:space-between;}
-.svc-date-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-top:1px solid var(--bdr);background:var(--sur2);font-size:12px;}
-.svc-date-val{font-family:var(--mono);font-size:12px;font-weight:500;}
-.ep-strip{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-top:1px solid var(--epbd);background:var(--epb);}
-.ep-lbl{font-size:11px;color:var(--ep);font-family:var(--mono);}
-.ep-val{font-family:var(--mono);font-size:14px;font-weight:500;color:var(--ep);}
-.ep-low{color:var(--dn);}
-.bk-banner{background:var(--byb);border-top:1px solid var(--bybd);padding:10px 16px;font-size:12px;color:var(--by);display:flex;justify-content:space-between;align-items:center;gap:8px;}
+/* ═══════════════════════════════════════════════
+   PAGE / SECTION
+   ═══════════════════════════════════════════════ */
+.page{display:none;max-width:860px;margin:0 auto;padding:20px 16px 32px;}
+.page.on{display:block;animation:fade .22s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 
-/* DISPATCH */
-.dispatch-card{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:16px;margin-bottom:20px;}
-.drow{display:flex;gap:8px;}
-.dinput{flex:1;border:1px solid var(--bdr);border-radius:8px;padding:9px 12px;font-size:14px;background:var(--sur2);color:var(--txt);}
-.dinput:focus{outline:none;border-color:var(--txt);}
-.dgo{padding:9px 18px;background:var(--txt);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:500;}
-.drecs{margin-top:12px;display:flex;flex-direction:column;gap:6px;}
-.drec{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;border:1px solid;}
-.dr-ok{background:var(--okb);border-color:var(--okbd);}
-.dr-warn{background:var(--wnb);border-color:var(--wnbd);}
-.dr-no{background:var(--dnb);border-color:var(--dnbd);}
-.dr-busy{background:var(--byb);border-color:var(--bybd);}
-.ddot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.dd-ok{background:var(--ok);}.dd-warn{background:#e6a817;}.dd-no{background:var(--dn);}.dd-busy{background:var(--by);}
+.sec{margin-bottom:26px;}
+.sec:last-child{margin-bottom:0;}
+.sec-hd{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:11px;}
+.sec-t{font-size:12px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);font-family:var(--mono);}
+.sec-a{font-size:12px;color:var(--info);font-weight:500;}
 
-/* FORMS */
-.fcard{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:20px;margin-bottom:14px;}
-.ftitle{font-size:16px;font-weight:600;margin-bottom:16px;}
-.fgrp{margin-bottom:14px;}
-.flbl{font-size:11px;color:var(--mut);display:block;margin-bottom:5px;font-family:var(--mono);letter-spacing:.07em;text-transform:uppercase;}
-.finput{width:100%;border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;font-size:14px;background:var(--sur2);color:var(--txt);transition:border .15s;}
-.finput:focus{outline:none;border-color:var(--txt);background:var(--sur);}
-.date-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.ferr{font-size:12px;color:var(--dn);margin-top:4px;}
-.submit-btn{width:100%;padding:13px;background:var(--txt);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;margin-top:4px;transition:opacity .15s;}
-.submit-btn:hover{opacity:.82;}
-.toast{display:none;padding:12px 14px;border-radius:8px;font-size:13px;text-align:center;margin-top:10px;border:1px solid;}
-.toast.show{display:block;}
-.cpicks{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
-.cpick{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border:1.5px solid var(--bdr);border-radius:8px;background:none;width:100%;text-align:left;transition:all .15s;}
-.cpick:hover:not(:disabled){border-color:var(--txt);}
-.cpick.sel{border-color:var(--txt);background:var(--sur2);}
-.cpick:disabled{opacity:.4;cursor:not-allowed;}
+.h1{font-size:20px;font-weight:700;letter-spacing:-.01em;margin-bottom:2px;}
+.h2{font-size:16px;font-weight:600;margin-bottom:14px;}
+.sub{font-size:13px;color:var(--text-2);}
 
-/* ADMIN */
-.admin-banner{background:var(--adb);border:1px solid var(--adbd);border-radius:var(--r);padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--ad);display:flex;align-items:center;gap:6px;}
-.admin-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
-.atab{padding:7px 14px;border:1px solid var(--bdr);border-radius:8px;background:none;font-size:13px;color:var(--mut);font-weight:500;transition:all .15s;}
-.atab.on{background:var(--txt);color:#fff;border-color:var(--txt);}
-.apanel{display:none;}
-.apanel.on{display:block;}
-.alist{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
-.aitem{background:var(--sur);border:1px solid var(--bdr);border-radius:8px;padding:12px 14px;display:flex;align-items:center;gap:10px;}
-.aitem-thumb{width:52px;height:36px;border-radius:6px;object-fit:cover;background:var(--sur2);flex-shrink:0;}
-.aitem-thumb-ph{width:52px;height:36px;border-radius:6px;background:var(--sur2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
-.aitem-info{flex:1;}
-.aitem-name{font-size:14px;font-weight:600;}
-.aitem-sub{font-size:12px;color:var(--mut);margin-top:2px;}
-.aitem-actions{display:flex;gap:6px;flex-shrink:0;}
-.icon-btn{width:32px;height:32px;border-radius:7px;border:1px solid var(--bdr);background:none;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s;}
-.icon-btn:hover{border-color:var(--txt);background:var(--sur2);}
-.icon-btn.del:hover{border-color:var(--dn);background:var(--dnb);}
-.add-row-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px;border:1.5px dashed var(--bdr);border-radius:8px;background:none;font-size:13px;color:var(--mut);transition:all .15s;}
-.add-row-btn:hover{border-color:var(--txt);color:var(--txt);}
+/* ═══════════════════════════════════════════════
+   CARDS
+   ═══════════════════════════════════════════════ */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-1);overflow:hidden;}
+.card-p{padding:18px;}
 
-/* LOGS */
-.lrow{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bdr);}
-.lrow:last-child{border-bottom:none;}
-.lrow-name{font-size:13px;font-weight:500;}
-.lrow-note{font-size:12px;color:var(--mut);}
-.lrow-val{font-family:var(--mono);font-size:13px;}
-.lrow-date{font-size:11px;color:var(--mut);font-family:var(--mono);}
+/* fleet summary strip */
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:22px;}
+.sm{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:11px 8px;text-align:center;box-shadow:var(--sh-1);}
+.sm-v{font-family:var(--mono);font-size:21px;font-weight:600;line-height:1.15;}
+.sm-l{font-size:10.5px;color:var(--text-3);margin-top:1px;line-height:1.35;}
 
-/* EASY PASS */
-.ep-card{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:16px;margin-bottom:10px;}
-.ep-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
-.ep-balance-big{font-family:var(--mono);font-size:26px;font-weight:500;}
-.ep-actions{display:flex;gap:8px;margin-bottom:12px;}
-.ep-btn{flex:1;padding:9px;border:1px solid var(--bdr);border-radius:8px;background:none;font-size:13px;font-weight:500;color:var(--txt);transition:all .15s;}
-.ep-btn:hover{border-color:var(--txt);background:var(--sur2);}
-.ep-btn.topup{background:var(--epb);border-color:var(--epbd);color:var(--ep);}
-.ep-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--bdr);font-size:13px;}
-.ep-row:last-child{border-bottom:none;}
-.ep-plus{color:var(--ok);font-family:var(--mono);font-weight:500;}
-.ep-minus{color:var(--dn);font-family:var(--mono);font-weight:500;}
+/* car card */
+.cc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);
+  box-shadow:var(--sh-1);overflow:hidden;margin-bottom:12px;transition:box-shadow .18s,border-color .18s;}
+.cc:hover{box-shadow:var(--sh-2);}
+.cc-top{display:flex;gap:13px;padding:16px 16px 13px;align-items:flex-start;}
+.cc-img{width:64px;height:46px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--surface-2);}
+.cc-ph{width:64px;height:46px;border-radius:10px;background:var(--surface-2);display:flex;
+  align-items:center;justify-content:center;font-size:21px;flex-shrink:0;}
+.cc-id{flex:1;min-width:0;}
+.cc-nm{font-size:16px;font-weight:600;line-height:1.35;}
+.cc-pl{font-family:var(--mono);font-size:11.5px;color:var(--text-3);letter-spacing:.02em;}
+.cc-mk{font-size:12px;color:var(--text-3);}
 
-/* AVATAR */
-.avatar{width:38px;height:38px;border-radius:50%;background:var(--byb);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:var(--by);flex-shrink:0;}
+.pill{font-size:11px;font-weight:600;padding:3.5px 10px;border-radius:20px;
+  white-space:nowrap;border:1px solid;flex-shrink:0;line-height:1.45;}
+.p-ok{background:var(--ok-bg);color:var(--ok);border-color:var(--ok-bd);}
+.p-warn{background:var(--warn-bg);color:var(--warn);border-color:var(--warn-bd);}
+.p-danger{background:var(--danger-bg);color:var(--danger);border-color:var(--danger-bd);}
+.p-busy{background:var(--info-bg);color:var(--info);border-color:var(--info-bd);}
+.p-mut{background:var(--surface-2);color:var(--text-3);border-color:var(--border);}
 
-/* MODAL */
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center;padding:20px;}
-.modal-bg.show{display:flex;}
-.modal{background:var(--sur);border-radius:var(--r);padding:20px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto;}
-.modal-title{font-size:15px;font-weight:600;margin-bottom:16px;}
-.modal-btns{display:flex;gap:8px;margin-top:14px;}
-.mcancel{flex:1;padding:10px;border:1px solid var(--bdr);border-radius:8px;background:none;font-size:14px;}
-.mok{flex:1;padding:10px;background:var(--txt);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;}
-.mdanger{flex:1;padding:10px;background:var(--dn);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;}
-.img-preview{width:100%;height:120px;object-fit:cover;border-radius:8px;margin-top:8px;display:none;}
-.img-preview.show{display:block;}
-.search-results{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
-.sr-img{width:80px;height:56px;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:border .15s;}
-.sr-img:hover,.sr-img.sel{border-color:var(--by);}
+.cc-body{padding:0 16px 14px;}
+.gauge{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:9px;}
+.g-main{display:flex;align-items:baseline;gap:5px;}
+.g-v{font-family:var(--mono);font-size:26px;font-weight:600;line-height:1;letter-spacing:-.02em;}
+.g-u{font-size:12px;color:var(--text-3);}
+.g-side{text-align:right;}
+.g-sv{font-family:var(--mono);font-size:14px;font-weight:600;line-height:1.2;}
+.g-sl{font-size:10.5px;color:var(--text-3);}
+.track{height:5px;background:var(--surface-3);border-radius:3px;overflow:hidden;}
+.fill{height:100%;border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+.f-ok{background:var(--ok);}.f-warn{background:var(--warn-solid);}.f-danger{background:var(--danger);}
 
-/* MISC */
-.wl-card{background:var(--sur);border:1px solid var(--bdr);border-radius:8px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
-.wl-del{font-size:12px;color:var(--dn);background:none;border:none;padding:4px;}
-.bk-card{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
-.bk-act{font-size:11px;background:none;border:none;display:block;text-align:right;margin-top:5px;}
-.empty{text-align:center;padding:28px;color:var(--mut);font-size:13px;}
-.sk{background:linear-gradient(90deg,var(--sur2) 25%,var(--bdr) 50%,var(--sur2) 75%);background-size:200% 100%;animation:sk 1.2s infinite;border-radius:8px;}
-@keyframes sk{0%{background-position:200%}100%{background-position:-200%}}
-.divider{height:1px;background:var(--bdr);margin:14px 0;}
-.hint{font-size:11px;color:var(--mut);margin-top:4px;line-height:1.5;}
+.cc-rows{border-top:1px solid var(--border);}
+.crow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 16px;font-size:12.5px;}
+.crow + .crow{border-top:1px solid var(--border);}
+.crow-l{color:var(--text-3);display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.crow-v{font-family:var(--mono);font-size:12px;font-weight:500;text-align:right;}
+.trg{font-family:var(--mono);font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:5px;
+  background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-bd);}
+.ep-row{background:var(--violet-bg);border-top:1px solid var(--violet-bd);}
+.ep-row .crow-l{color:var(--violet);opacity:.8;}
+.ep-row .crow-v{color:var(--violet);font-size:14px;font-weight:600;}
+.ep-row.low .crow-v{color:var(--danger);}
+.bk-strip{background:var(--info-bg);border-top:1px solid var(--info-bd);padding:11px 16px;
+  display:flex;gap:10px;align-items:flex-start;justify-content:space-between;}
+.bk-strip b{color:var(--info);}
+.bk-strip .t{font-size:12.5px;color:var(--info);line-height:1.55;}
+.bk-strip .d{font-family:var(--mono);font-size:11px;color:var(--info);opacity:.85;}
 
-@media(max-width:480px){
-  .logo{display:none;}
-  .tab{padding:5px 8px;font-size:11px;}
-  .page{padding:14px 12px 60px;}
+/* ═══════════════════════════════════════════════
+   DISPATCH
+   ═══════════════════════════════════════════════ */
+.disp-in{display:flex;gap:8px;}
+.disp-in .inp{flex:1;min-width:0;}
+.rec{display:flex;gap:11px;align-items:flex-start;padding:12px 13px;border-radius:var(--r);border:1px solid;}
+.rec + .rec{margin-top:7px;}
+.r-ok{background:var(--ok-bg);border-color:var(--ok-bd);}
+.r-warn{background:var(--warn-bg);border-color:var(--warn-bd);}
+.r-no{background:var(--danger-bg);border-color:var(--danger-bd);}
+.r-busy{background:var(--info-bg);border-color:var(--info-bd);}
+.dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:6px;}
+.d-ok{background:var(--ok);}.d-warn{background:var(--warn-solid);}
+.d-no{background:var(--danger);}.d-busy{background:var(--info);}
+.rec-n{font-size:13.5px;font-weight:600;}
+.rec-m{font-size:12.5px;color:var(--text-2);line-height:1.5;}
+
+/* ═══════════════════════════════════════════════
+   FORMS
+   ═══════════════════════════════════════════════ */
+.fg{margin-bottom:15px;}
+.fg:last-of-type{margin-bottom:18px;}
+.lbl{display:block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text-3);font-family:var(--mono);margin-bottom:6px;}
+.inp{
+  width:100%;min-height:46px;border:1px solid var(--border);border-radius:10px;
+  padding:11px 13px;background:var(--surface-2);color:var(--text);transition:.15s;
+}
+.inp::placeholder{color:var(--text-3);}
+.inp:focus{outline:none;border-color:var(--text-2);background:var(--surface);box-shadow:0 0 0 3px color-mix(in srgb,var(--text-2) 12%,transparent);}
+select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--text-3) 50%),linear-gradient(135deg,var(--text-3) 50%,transparent 50%);
+  background-position:calc(100% - 17px) 50%,calc(100% - 12px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:34px;}
+.inp-big{font-family:var(--mono);font-size:19px;font-weight:600;min-height:54px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;}
+.err{font-size:12px;color:var(--danger);margin-top:5px;}
+.hint{font-size:11.5px;color:var(--text-3);margin-top:5px;line-height:1.5;}
+
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:7px;width:100%;min-height:48px;
+  padding:12px 18px;border-radius:11px;font-size:15px;font-weight:600;transition:.15s;
+  background:var(--accent);color:var(--accent-fg);border:1px solid var(--accent);
+}
+.btn:hover{opacity:.86;}
+.btn:active{transform:scale(.99);}
+.btn-2{background:var(--surface);color:var(--text);border-color:var(--border-2);}
+.btn-2:hover{background:var(--surface-2);opacity:1;}
+.btn-d{background:var(--danger);border-color:var(--danger);color:#fff;}
+.btn-sm{min-height:40px;padding:9px 14px;font-size:13.5px;border-radius:9px;width:auto;}
+.btn-row{display:flex;gap:9px;}
+.btn-row > .btn{flex:1;min-width:0;}
+.btn-row > .btn-sm{flex:0 0 auto;}
+
+/* selectable car row */
+.pick{
+  display:flex;align-items:center;justify-content:space-between;gap:11px;width:100%;
+  padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--r);
+  background:var(--surface);text-align:left;transition:.15s;margin-bottom:8px;
+}
+.pick:hover:not(:disabled){border-color:var(--border-2);}
+.pick.sel{border-color:var(--accent);background:var(--surface-2);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 10%,transparent);}
+.pick:disabled{opacity:.45;cursor:not-allowed;}
+.pick-l{display:flex;align-items:center;gap:10px;min-width:0;}
+.pick-img{width:44px;height:32px;border-radius:7px;object-fit:cover;flex-shrink:0;background:var(--surface-2);}
+.pick-ph{width:44px;height:32px;border-radius:7px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.pick-n{font-size:14px;font-weight:600;line-height:1.35;}
+.pick-s{font-family:var(--mono);font-size:11px;color:var(--text-3);}
+.pick-r{text-align:right;flex-shrink:0;}
+
+/* sub tabs */
+.stabs{display:flex;gap:3px;background:var(--surface-2);border-radius:11px;padding:3px;margin-bottom:18px;}
+.stab{flex:1;padding:8px 10px;border-radius:8px;font-size:13px;font-weight:500;color:var(--text-2);transition:.15s;white-space:nowrap;}
+.stab.on{background:var(--surface);color:var(--text);font-weight:600;box-shadow:var(--sh-1);}
+.spanel{display:none;}
+.spanel.on{display:block;animation:fade .2s ease;}
+
+/* ═══════════════════════════════════════════════
+   LISTS
+   ═══════════════════════════════════════════════ */
+.lst{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-1);}
+.li{display:flex;align-items:center;gap:11px;padding:12px 14px;}
+.li + .li{border-top:1px solid var(--border);}
+.li-m{flex:1;min-width:0;}
+.li-t{font-size:14px;font-weight:600;line-height:1.4;}
+.li-s{font-size:12.5px;color:var(--text-2);line-height:1.5;}
+.li-r{text-align:right;flex-shrink:0;}
+.li-v{font-family:var(--mono);font-size:13.5px;font-weight:600;}
+.li-d{font-family:var(--mono);font-size:11px;color:var(--text-3);}
+.li-act{display:flex;gap:6px;flex-shrink:0;}
+.ib{width:34px;height:34px;border-radius:9px;border:1px solid var(--border);display:flex;
+  align-items:center;justify-content:center;font-size:14px;transition:.15s;flex-shrink:0;}
+.ib:hover{border-color:var(--border-2);background:var(--surface-2);}
+.ib.del:hover{border-color:var(--danger-bd);background:var(--danger-bg);}
+.ib-sm{width:29px;height:29px;font-size:12px;border-radius:8px;}
+.thumb{width:54px;height:38px;border-radius:8px;object-fit:cover;background:var(--surface-2);flex-shrink:0;}
+.thumb-ph{width:54px;height:38px;border-radius:8px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--info-bg);color:var(--info);
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;border:1px solid var(--info-bd);}
+
+.add-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;min-height:46px;
+  border:1.5px dashed var(--border-2);border-radius:var(--r);color:var(--text-3);font-size:13.5px;
+  font-weight:500;transition:.15s;margin-top:11px;}
+.add-btn:hover{border-color:var(--text-2);color:var(--text);background:var(--surface-2);}
+
+.plus{color:var(--ok);font-family:var(--mono);font-weight:600;}
+.minus{color:var(--danger);font-family:var(--mono);font-weight:600;}
+
+/* booking card */
+.bkc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:14px 16px;margin-bottom:10px;box-shadow:var(--sh-1);}
+.bkc-h{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:7px;}
+.bkc-meta{font-family:var(--mono);font-size:11.5px;color:var(--text-3);margin-top:5px;}
+.bkc-acts{display:flex;gap:8px;margin-top:11px;padding-top:11px;border-top:1px solid var(--border);}
+
+/* empty / error */
+.empty{text-align:center;padding:34px 20px;color:var(--text-3);font-size:13.5px;
+  background:var(--surface);border:1px dashed var(--border-2);border-radius:var(--r-lg);}
+.empty .ic{font-size:28px;margin-bottom:8px;opacity:.5;}
+.banner{border-radius:var(--r);padding:13px 15px;margin-bottom:18px;border:1px solid;display:flex;gap:11px;align-items:flex-start;}
+.bn-warn{background:var(--warn-bg);border-color:var(--warn-bd);color:var(--warn);}
+.bn-err{background:var(--danger-bg);border-color:var(--danger-bd);color:var(--danger);}
+.banner h4{font-size:13.5px;font-weight:600;margin-bottom:2px;}
+.banner p{font-size:12.5px;line-height:1.55;opacity:.92;}
+.sk{background:linear-gradient(90deg,var(--surface-2) 25%,var(--surface-3) 50%,var(--surface-2) 75%);
+  background-size:200% 100%;animation:sk 1.3s infinite;border-radius:var(--r-lg);}
+@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ═══════════════════════════════════════════════
+   CALENDAR
+   ═══════════════════════════════════════════════ */
+.cal-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.cal-nav{display:flex;align-items:center;gap:7px;}
+.cal-arw{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--surface);
+  display:flex;align-items:center;justify-content:center;font-size:17px;color:var(--text-2);transition:.15s;}
+.cal-arw:hover{border-color:var(--border-2);color:var(--text);}
+.cal-m{font-size:17px;font-weight:700;letter-spacing:-.01em;min-width:auto;}
+.legend{display:flex;gap:12px;flex-wrap:wrap;}
+.lg{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text-2);}
+.lg i{width:11px;height:11px;border-radius:3px;display:block;flex-shrink:0;}
+
+.cal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-1);}
+.cal-hd{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border);background:var(--surface-2);}
+.cal-hd div{padding:8px 4px;text-align:center;font-size:11.5px;font-weight:600;color:var(--text-3);}
+.cal-hd div.we{color:var(--danger);}
+.cal-g{display:grid;grid-template-columns:repeat(7,1fr);}
+.cd{min-height:104px;padding:6px 7px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);
+  transition:background .12s;cursor:pointer;overflow:hidden;}
+.cd:nth-child(7n){border-right:none;}
+.cd.out{background:var(--surface-2);cursor:default;}
+.cd.we{background:color-mix(in srgb,var(--surface-2) 45%,transparent);}
+.cd:not(.out):hover{background:var(--surface-2);}
+.cd-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;min-height:22px;}
+.cd-n{font-size:13px;font-weight:500;}
+.cd.out .cd-n{color:var(--text-3);opacity:.55;}
+.cd.we .cd-n{color:var(--danger);}
+.cd.today .cd-n{background:var(--info);color:#fff;width:23px;height:23px;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;font-weight:700;}
+.cd-c{font-family:var(--mono);font-size:9.5px;font-weight:600;background:var(--surface-3);
+  color:var(--text-2);padding:1px 5px;border-radius:9px;}
+.ev{border-radius:4px;padding:2px 5px;margin-bottom:2px;font-size:10.5px;font-weight:500;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-left:3px solid;line-height:1.6;}
+.ev-more{font-size:10px;color:var(--text-3);padding:1px 4px;}
+.dots{display:none;gap:3px;flex-wrap:wrap;}
+.dots i{width:6px;height:6px;border-radius:50%;display:block;}
+
+@media(max-width:620px){
+  .cd{min-height:58px;padding:5px 4px;}
+  .ev,.ev-more{display:none;}
+  .dots{display:flex;}
+  .cd-c{display:none;}
+  .cal-m{font-size:15px;}
+  .legend{width:100%;}
+}
+
+.agenda-d{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text-3);
+  text-transform:uppercase;letter-spacing:.07em;margin:16px 0 8px;}
+
+/* ═══════════════════════════════════════════════
+   MODAL
+   ═══════════════════════════════════════════════ */
+.mbg{display:none;position:fixed;inset:0;background:rgba(20,18,14,.5);z-index:500;
+  align-items:flex-end;justify-content:center;padding:0;backdrop-filter:blur(3px);}
+.mbg.show{display:flex;animation:fade .18s ease;}
+.modal{background:var(--surface);border-radius:var(--r-xl) var(--r-xl) 0 0;padding:20px 20px calc(20px + var(--safe-b));
+  width:100%;max-width:460px;max-height:92vh;overflow-y:auto;box-shadow:var(--sh-3);
+  animation:up .26s cubic-bezier(.2,.9,.3,1);}
+@keyframes up{from{transform:translateY(22px);opacity:.6}to{transform:none;opacity:1}}
+@media(min-width:600px){
+  .mbg{align-items:center;padding:20px;}
+  .modal{border-radius:var(--r-xl);padding-bottom:20px;}
+  @keyframes up{from{transform:scale(.97);opacity:.5}to{transform:none;opacity:1}}
+}
+.m-grip{width:36px;height:4px;border-radius:3px;background:var(--border-2);margin:0 auto 14px;}
+@media(min-width:600px){.m-grip{display:none;}}
+.m-hd{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px;}
+.m-t{font-size:16px;font-weight:700;}
+.m-x{width:32px;height:32px;border-radius:9px;color:var(--text-3);font-size:19px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s;}
+.m-x:hover{background:var(--surface-2);color:var(--text);}
+.m-btns{display:flex;gap:9px;margin-top:16px;}
+.m-btns .btn{min-height:46px;}
+.box{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:15px;}
+.box-t{font-size:11px;font-family:var(--mono);color:var(--text-3);letter-spacing:.06em;
+  text-transform:uppercase;font-weight:600;margin-bottom:11px;}
+.prev{width:100%;height:132px;object-fit:cover;border-radius:10px;margin-top:9px;display:none;border:1px solid var(--border);}
+.prev.show{display:block;}
+
+/* toast */
+.toastbox{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--nav-h) + var(--safe-b) + 14px);
+  z-index:600;width:calc(100% - 32px);max-width:400px;pointer-events:none;}
+@media(min-width:761px){.toastbox{bottom:22px;}}
+.tst{display:flex;gap:9px;align-items:flex-start;padding:12px 15px;border-radius:12px;
+  font-size:13.5px;font-weight:500;box-shadow:var(--sh-3);border:1px solid;margin-top:8px;
+  animation:tin .25s cubic-bezier(.2,.9,.3,1);line-height:1.5;}
+@keyframes tin{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+.t-ok{background:var(--ok-bg);border-color:var(--ok-bd);color:var(--ok);}
+.t-warn{background:var(--warn-bg);border-color:var(--warn-bd);color:var(--warn);}
+.t-err{background:var(--danger-bg);border-color:var(--danger-bd);color:var(--danger);}
+.tst.out{animation:tout .2s ease forwards;}
+@keyframes tout{to{transform:translateY(10px);opacity:0}}
+
+/* history */
+.hr{display:flex;gap:11px;align-items:flex-start;padding:12px 14px;}
+.hr + .hr{border-top:1px solid var(--border);}
+.tag{font-size:10px;font-family:var(--mono);font-weight:600;padding:2.5px 7px;border-radius:5px;
+  white-space:nowrap;border:1px solid;line-height:1.5;}
+.stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:16px;}
+.st{border-radius:var(--r);padding:13px 10px;text-align:center;border:1px solid;}
+.st-v{font-family:var(--mono);font-size:20px;font-weight:600;line-height:1.2;}
+.st-l{font-size:11px;margin-top:1px;}
+
+@media(max-width:420px){
+  .summary{grid-template-columns:repeat(2,1fr);}
+  .grid3{grid-template-columns:1fr;}
+  .cc-img,.cc-ph{width:54px;height:40px;}
+  .g-v{font-size:23px;}
 }
 </style>
 </head>
 <body>
+
 <div class="lbar" id="lbar"></div>
 
-<nav class="nav">
-  <div class="nav-in">
-    <div class="logo"><b>FLEET</b>.MGR</div>
-    <div class="tabs">
-      <button class="tab on"        onclick="go('status')">สถานะรถ</button>
-      <button class="tab"           onclick="go('book')">จองรถ</button>
-      <button class="tab"           onclick="go('mile')">เลขไมล์</button>
-      <button class="tab"           onclick="go('ep')">Easy Pass</button>
-      <button class="tab"           onclick="go('bookings')">รายการจอง</button>
-      <button class="tab"           onclick="go('history')">📋 ประวัติ</button>
-      <button class="tab"           onclick="go('timeline')">📅 Timeline</button>
-      <button class="tab admin-tab" onclick="go('admin')">⚙ Admin</button>
+<!-- ══════════ HEADER ══════════ -->
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="brand">
+      <div class="brand-mark">🚙</div>
+      <div class="brand-txt"><b>FLEET</b>.MGR</div>
     </div>
+    <nav class="dtabs" id="dtabs"></nav>
+    <div class="hdr-sp"></div>
+    <button class="hdr-btn" id="theme-btn" onclick="toggleTheme()" title="สลับธีม">◐</button>
+    <button class="hdr-btn" id="refresh-btn" onclick="loadAll(true)" title="รีเฟรช">↻</button>
+    <button class="hdr-btn" id="admin-btn" onclick="go('admin')" title="Admin">⚙</button>
   </div>
-</nav>
+</header>
 
-<!-- ══ STATUS ══ -->
+<!-- ══════════ STATUS ══════════ -->
 <div class="page on" id="page-status">
-  <div id="cfg-banner-area"></div>
-  <div class="slabel" style="margin-top:4px">// สถานะรถทั้งหมด</div>
-  <div class="car-grid" id="car-grid">
-    <div class="sk" style="height:140px"></div>
-    <div class="sk" style="height:140px;margin-top:2px"></div>
-    <div class="sk" style="height:140px;margin-top:2px"></div>
+  <div id="alert-area"></div>
+
+  <div class="sec">
+    <div class="h1">ภาพรวมกองรถ</div>
+    <div class="sub" id="status-sub">กำลังโหลด…</div>
   </div>
-  <div class="slabel">// จัดรถออกภาคสนาม</div>
-  <div class="dispatch-card">
-    <div class="drow">
-      <input class="dinput" id="disp-km" type="number" placeholder="ระยะทางที่จะไป (กม.)">
-      <button class="dgo" onclick="calcDispatch()">เช็ก</button>
+
+  <div class="summary" id="summary"></div>
+
+  <div class="sec">
+    <div class="sec-hd"><div class="sec-t">สถานะรถทั้งหมด</div></div>
+    <div id="car-grid">
+      <div class="sk" style="height:190px;margin-bottom:12px"></div>
+      <div class="sk" style="height:190px;margin-bottom:12px"></div>
     </div>
-    <div class="drecs" id="disp-results"></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-hd"><div class="sec-t">จัดรถออกภาคสนาม</div></div>
+    <div class="card card-p">
+      <div class="disp-in">
+        <input class="inp" id="disp-km" type="number" inputmode="numeric" placeholder="ระยะทางที่จะไป (กม.)">
+        <button class="btn btn-sm" style="flex-shrink:0;min-height:46px" onclick="calcDispatch()">เช็ก</button>
+      </div>
+      <div id="disp-results" style="margin-top:12px"></div>
+    </div>
   </div>
 </div>
 
-<!-- ══ BOOK ══ -->
-<div class="page" id="page-book">
-  <div class="fcard">
-    <div class="ftitle">จองรถ</div>
-    <div class="slabel">เลือกรถ</div>
-    <div class="cpicks" id="car-picks"></div>
-    <div class="fgrp"><label class="flbl">ทีม / ชื่อผู้จอง</label><input class="finput" id="b-team" placeholder="เช่น ทีม A"></div>
-    <div class="fgrp"><label class="flbl">ภารกิจ / ปลายทาง</label><input class="finput" id="b-mission" placeholder="เช่น สำรวจพื้นที่กระบี่"></div>
-    <div class="fgrp date-row">
-      <div><label class="flbl">วันที่ออก</label><input class="finput" id="b-start" type="date"></div>
-      <div><label class="flbl">วันที่กลับ</label><input class="finput" id="b-end" type="date"></div>
+<!-- ══════════ TIMELINE ══════════ -->
+<div class="page" id="page-timeline">
+  <div class="cal-bar">
+    <div class="cal-nav">
+      <button class="cal-arw" onclick="tlMove(-1)">‹</button>
+      <button class="cal-arw" onclick="tlMove(1)">›</button>
+      <span class="cal-m" id="tl-label"></span>
+      <button class="btn btn-2 btn-sm" onclick="tlToday()">วันนี้</button>
     </div>
-    <div class="fgrp"><label class="flbl">จำนวนคนในทีม</label><input class="finput" id="b-count" type="number" min="1" placeholder="คน"></div>
-    <button class="submit-btn" onclick="submitBooking()">ยืนยันการจอง</button>
-    <div class="toast" id="book-toast"></div>
+    <div class="legend" id="tl-legend"></div>
   </div>
-  <div id="wl-section" style="display:none">
-    <div class="slabel">// คิวรอ</div>
+
+  <div class="cal">
+    <div class="cal-hd">
+      <div class="we">อา</div><div>จ</div><div>อ</div><div>พ</div><div>พฤ</div><div>ศ</div><div class="we">ส</div>
+    </div>
+    <div class="cal-g" id="tl-grid"></div>
+  </div>
+
+  <div id="tl-agenda"></div>
+</div>
+
+<!-- ══════════ BOOK ══════════ -->
+<div class="page" id="page-book">
+  <div class="stabs">
+    <button class="stab on" onclick="subTab('bk',0)">จองรถ</button>
+    <button class="stab" onclick="subTab('bk',1)">รายการจอง</button>
+    <button class="stab" onclick="subTab('bk',2)">คิวรอ <span id="wl-count"></span></button>
+  </div>
+
+  <div class="spanel on" data-sub="bk">
+    <div class="card card-p">
+      <div class="h2">สร้างการจองใหม่</div>
+      <div class="fg">
+        <label class="lbl">เลือกรถ</label>
+        <div id="car-picks"></div>
+      </div>
+      <div class="fg"><label class="lbl">ทีม / ชื่อผู้จอง</label><input class="inp" id="b-team" placeholder="เช่น ทีม A" list="team-list"></div>
+      <datalist id="team-list"></datalist>
+      <div class="fg"><label class="lbl">ภารกิจ / ปลายทาง</label><input class="inp" id="b-mission" placeholder="เช่น สำรวจพื้นที่กระบี่"></div>
+      <div class="fg grid2">
+        <div><label class="lbl">วันที่ออก</label><input class="inp" id="b-start" type="date"></div>
+        <div><label class="lbl">วันที่กลับ</label><input class="inp" id="b-end" type="date"></div>
+      </div>
+      <div class="fg"><label class="lbl">จำนวนคนในทีม</label><input class="inp" id="b-count" type="number" inputmode="numeric" min="1" placeholder="คน"></div>
+      <button class="btn" onclick="submitBooking()">ยืนยันการจอง</button>
+    </div>
+  </div>
+
+  <div class="spanel" data-sub="bk">
+    <div id="all-bookings"></div>
+  </div>
+
+  <div class="spanel" data-sub="bk">
     <div id="wl-list"></div>
   </div>
 </div>
 
-<!-- ══ MILEAGE ══ -->
-<div class="page" id="page-mile">
-  <div class="slabel" style="margin-top:4px">// อัปเดตเลขไมล์หลังใช้รถ</div>
-  <div class="cpicks" id="mile-btns"></div>
-  <div class="fcard" id="mile-form" style="display:none">
-    <div class="fgrp">
-      <label class="flbl">เลขไมล์ล่าสุด (กม.)</label>
-      <input class="finput" id="m-miles" type="number" style="font-family:var(--mono);font-size:18px">
-      <div class="ferr" id="m-err"></div>
+<!-- ══════════ LOG (mile + easypass) ══════════ -->
+<div class="page" id="page-log">
+  <div class="stabs">
+    <button class="stab on" onclick="subTab('lg',0)">📍 เลขไมล์</button>
+    <button class="stab" onclick="subTab('lg',1)">💳 Easy Pass</button>
+  </div>
+
+  <div class="spanel on" data-sub="lg">
+    <div class="sec">
+      <div class="sec-hd"><div class="sec-t">เลือกรถเพื่ออัปเดตเลขไมล์</div></div>
+      <div id="mile-picks"></div>
     </div>
-    <div class="fgrp"><label class="flbl">ทีม / ผู้กรอก</label><input class="finput" id="m-team" placeholder="ชื่อทีม"></div>
-    <div class="fgrp"><label class="flbl">หมายเหตุ</label><input class="finput" id="m-note" placeholder="เช่น กลับจากภารกิจกระบี่"></div>
-    <button class="submit-btn" onclick="submitMile()">บันทึกเลขไมล์</button>
-    <div class="toast" id="mile-toast">✓ บันทึกเรียบร้อย</div>
-    <div style="margin-top:16px;border-top:1px solid var(--bdr);padding-top:14px;">
-      <div class="slabel" style="margin-bottom:8px">ประวัติล่าสุด</div>
-      <div id="mile-history"></div>
+    <div id="mile-form" style="display:none">
+      <div class="card card-p">
+        <div class="fg">
+          <label class="lbl">เลขไมล์ล่าสุด (กม.)</label>
+          <input class="inp inp-big" id="m-miles" type="number" inputmode="numeric">
+          <div class="err" id="m-err"></div>
+        </div>
+        <div class="fg"><label class="lbl">ทีม / ผู้กรอก</label><input class="inp" id="m-team" placeholder="ชื่อทีม" list="team-list"></div>
+        <div class="fg"><label class="lbl">หมายเหตุ</label><input class="inp" id="m-note" placeholder="เช่น กลับจากภารกิจกระบี่"></div>
+        <button class="btn" onclick="submitMile()">บันทึกเลขไมล์</button>
+      </div>
+      <div class="sec" style="margin-top:20px">
+        <div class="sec-hd"><div class="sec-t">ประวัติล่าสุด</div></div>
+        <div id="mile-history"></div>
+      </div>
     </div>
+  </div>
+
+  <div class="spanel" data-sub="lg">
+    <div id="ep-cards"></div>
   </div>
 </div>
 
-<!-- ══ EASY PASS ══ -->
-<div class="page" id="page-ep">
-  <div class="slabel" style="margin-top:4px">// Easy Pass — ยอดคงเหลือ</div>
-  <div id="ep-cards"></div>
-</div>
-
-<!-- ══ BOOKINGS ══ -->
-<div class="page" id="page-bookings">
-  <div class="slabel" style="margin-top:4px">// รายการจองทั้งหมด</div>
-  <div id="all-bookings"></div>
-</div>
-
-<!-- ══ HISTORY ══ -->
+<!-- ══════════ HISTORY ══════════ -->
 <div class="page" id="page-history">
-  <div class="slabel" style="margin-top:4px">// ประวัติการใช้งานทั้งหมด</div>
+  <div class="sec">
+    <div class="h1">ประวัติการใช้งาน</div>
+    <div class="sub">กรองตามช่วงเวลา รถ ทีม และประเภทรายการ</div>
+  </div>
 
-  <!-- FILTERS -->
-  <div class="fcard" style="padding:14px 16px;margin-bottom:14px;">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
-      <div>
-        <label class="flbl">จากวันที่</label>
-        <input class="finput" id="hist-from" type="date">
-      </div>
-      <div>
-        <label class="flbl">ถึงวันที่</label>
-        <input class="finput" id="hist-to" type="date">
-      </div>
+  <div class="card card-p" style="margin-bottom:16px">
+    <div class="fg grid2" style="margin-bottom:11px">
+      <div><label class="lbl">จากวันที่</label><input class="inp" id="hist-from" type="date"></div>
+      <div><label class="lbl">ถึงวันที่</label><input class="inp" id="hist-to" type="date"></div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
-      <div>
-        <label class="flbl">รถ</label>
-        <select class="finput" id="hist-car" style="font-size:13px">
-          <option value="">ทั้งหมด</option>
-        </select>
-      </div>
-      <div>
-        <label class="flbl">ทีม</label>
-        <select class="finput" id="hist-team" style="font-size:13px">
-          <option value="">ทั้งหมด</option>
-        </select>
-      </div>
-      <div>
-        <label class="flbl">ประเภท</label>
-        <select class="finput" id="hist-type" style="font-size:13px">
-          <option value="">ทั้งหมด</option>
-          <option value="booking">การจอง</option>
-          <option value="mile">เลขไมล์</option>
-          <option value="easypass">Easy Pass</option>
-        </select>
-      </div>
+    <div class="fg grid3" style="margin-bottom:14px">
+      <div><label class="lbl">รถ</label><select class="inp" id="hist-car"><option value="">ทั้งหมด</option></select></div>
+      <div><label class="lbl">ทีม</label><select class="inp" id="hist-team"><option value="">ทั้งหมด</option></select></div>
+      <div><label class="lbl">ประเภท</label><select class="inp" id="hist-type">
+        <option value="">ทั้งหมด</option><option value="booking">การจอง</option>
+        <option value="mile">เลขไมล์</option><option value="easypass">Easy Pass</option></select></div>
     </div>
-    <div style="display:flex;gap:8px;">
-      <button class="submit-btn" style="margin-top:0;flex:1" onclick="renderHistory()">🔍 ค้นหา</button>
-      <button onclick="exportCSV()" style="padding:10px 14px;border:1px solid var(--bdr);border-radius:8px;background:none;font-size:13px;font-weight:500;white-space:nowrap;">📥 CSV</button>
-      <button onclick="exportPDF()" style="padding:10px 14px;border:1px solid var(--bdr);border-radius:8px;background:none;font-size:13px;font-weight:500;white-space:nowrap;">🖨 PDF</button>
+    <div class="btn-row">
+      <button class="btn" onclick="renderHistory()">ค้นหา</button>
+      <button class="btn btn-2 btn-sm" style="min-height:48px" onclick="exportCSV()">CSV</button>
+      <button class="btn btn-2 btn-sm" style="min-height:48px" onclick="exportPDF()">PDF</button>
     </div>
   </div>
 
-  <!-- SUMMARY -->
-  <div id="hist-summary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;"></div>
-
-  <!-- TABLE -->
+  <div class="stat3" id="hist-summary"></div>
   <div id="hist-table"></div>
 </div>
 
-<!-- ══ TIMELINE ══ -->
-<div class="page" id="page-timeline">
-
-  <!-- TOP BAR -->
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
-    <div style="display:flex;align-items:center;gap:8px;">
-      <button onclick="tlMove(-1)" style="width:34px;height:34px;border:1px solid var(--bdr);border-radius:8px;background:var(--sur);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;">‹</button>
-      <button onclick="tlMove(1)"  style="width:34px;height:34px;border:1px solid var(--bdr);border-radius:8px;background:var(--sur);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;">›</button>
-      <span style="font-size:17px;font-weight:600" id="tl-month-label"></span>
-      <button onclick="tlToday()" style="padding:6px 14px;border:1px solid var(--bdr);border-radius:8px;background:var(--sur);font-size:13px;cursor:pointer;">วันนี้</button>
-    </div>
-    <div style="display:flex;gap:10px;align-items:center;">
-      <span style="font-size:12px;display:flex;align-items:center;gap:5px"><span style="width:14px;height:14px;border-radius:4px;background:var(--by);display:inline-block;flex-shrink:0"></span>กำลังใช้</span>
-      <span style="font-size:12px;display:flex;align-items:center;gap:5px"><span style="width:14px;height:14px;border-radius:4px;background:var(--ok);display:inline-block;flex-shrink:0"></span>เสร็จแล้ว</span>
-      <span style="font-size:12px;display:flex;align-items:center;gap:5px"><span style="width:14px;height:14px;border-radius:4px;background:#bbb;display:inline-block;flex-shrink:0"></span>ยกเลิก</span>
-    </div>
-  </div>
-
-  <!-- CALENDAR -->
-  <div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;">
-    <!-- Day headers -->
-    <div style="display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--bdr);">
-      <div style="padding:8px;text-align:center;font-size:12px;font-weight:600;color:var(--dn)">อา</div>
-      <div style="padding:8px;text-align:center;font-size:12px;font-weight:600;color:var(--mut)">จ</div>
-      <div style="padding:8px;text-align:center;font-size:12px;font-weight:600;color:var(--mut)">อ</div>
-      <div style="padding:8px;text-align:center;font-size:12px;font-weight:600;color:var(--mut)">พ</div>
-      <div style="padding:8px;text-align:center;font-size:12px;font-weight:600;color:var(--mut)">พฤ</div>
-      <div style="padding:8px;text-align:center;font-size:12px;font-weight:600;color:var(--mut)">ศ</div>
-      <div style="padding:8px;text-align:center;font-size:12px;font-weight:600;color:var(--dn)">ส</div>
-    </div>
-    <!-- Calendar grid -->
-    <div id="tl-cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);"></div>
-  </div>
-
-  <!-- EVENT DETAIL MODAL -->
-  <div class="modal-bg" id="tl-day-modal">
-    <div class="modal" style="max-width:360px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-        <div class="modal-title" id="tl-day-title" style="margin-bottom:0"></div>
-        <button onclick="closeModal('tl-day-modal')" style="border:none;background:none;font-size:20px;color:var(--mut);cursor:pointer;">×</button>
-      </div>
-      <div id="tl-day-events"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ ADMIN ══ -->
+<!-- ══════════ ADMIN ══════════ -->
 <div class="page" id="page-admin">
-  <div class="admin-banner">⚙️ <strong>Admin Panel</strong> — จัดการรถ สมาชิก และข้อมูลระบบ</div>
-  <div class="admin-tabs">
-    <button class="atab on" onclick="switchAdmin('cars')">🚗 รถ</button>
-    <button class="atab" onclick="switchAdmin('members')">👥 สมาชิก</button>
-    <button class="atab" onclick="switchAdmin('mile-edit')">📍 แก้ไขเลขไมล์</button>
-    <button class="atab" onclick="switchAdmin('ep-edit')">💳 แก้ไข Easy Pass</button>
-    <button class="atab" onclick="switchAdmin('settings')">🔗 ตั้งค่า API</button>
+  <div class="sec">
+    <div class="h1">⚙ Admin</div>
+    <div class="sub">จัดการรถ สมาชิก และข้อมูลระบบ</div>
   </div>
 
-  <div class="apanel on" id="apanel-cars">
-    <div class="slabel">รถในระบบ</div>
-    <div class="alist" id="admin-car-list"></div>
-    <button class="add-row-btn" onclick="openCarModal()">＋ เพิ่มรถ</button>
+  <div class="stabs" style="overflow-x:auto">
+    <button class="stab on" onclick="subTab('ad',0)">🚗 รถ</button>
+    <button class="stab" onclick="subTab('ad',1)">👥 สมาชิก</button>
+    <button class="stab" onclick="subTab('ad',2)">📍 ไมล์</button>
+    <button class="stab" onclick="subTab('ad',3)">💳 EP</button>
+    <button class="stab" onclick="subTab('ad',4)">🔗 API</button>
   </div>
 
-  <div class="apanel" id="apanel-members">
-    <div class="slabel">สมาชิกในระบบ</div>
-    <div class="alist" id="admin-member-list"></div>
-    <button class="add-row-btn" onclick="openMemberModal()">＋ เพิ่มสมาชิก</button>
+  <div class="spanel on" data-sub="ad">
+    <div id="admin-car-list"></div>
+    <button class="add-btn" onclick="openCarModal()">＋ เพิ่มรถ</button>
   </div>
 
-  <div class="apanel" id="apanel-mile-edit">
-    <div class="slabel">เลือกรถเพื่อแก้ไขเลขไมล์</div>
-    <div class="cpicks" id="admin-mile-picks"></div>
+  <div class="spanel" data-sub="ad">
+    <div id="admin-member-list"></div>
+    <button class="add-btn" onclick="openMemberModal()">＋ เพิ่มสมาชิก</button>
+  </div>
+
+  <div class="spanel" data-sub="ad">
+    <div class="sec-hd"><div class="sec-t">เลือกรถเพื่อแก้ไขเลขไมล์</div></div>
+    <div id="admin-mile-picks"></div>
     <div id="admin-mile-log"></div>
   </div>
 
-  <div class="apanel" id="apanel-ep-edit">
-    <div class="slabel">เลือกรถเพื่อแก้ไข Easy Pass</div>
-    <div class="cpicks" id="admin-ep-picks"></div>
+  <div class="spanel" data-sub="ad">
+    <div class="sec-hd"><div class="sec-t">เลือกรถเพื่อแก้ไข Easy Pass</div></div>
+    <div id="admin-ep-picks"></div>
     <div id="admin-ep-log"></div>
   </div>
 
-  <div class="apanel" id="apanel-settings">
-    <div class="fcard">
-      <div class="ftitle">🔗 ตั้งค่า Google Apps Script</div>
-      <div class="fgrp">
-        <label class="flbl">Apps Script Web App URL</label>
-        <input class="finput" id="api-url-input" placeholder="https://script.google.com/macros/s/.../exec" style="font-family:var(--mono);font-size:13px">
+  <div class="spanel" data-sub="ad">
+    <div class="card card-p">
+      <div class="h2">Google Apps Script</div>
+      <div class="fg">
+        <label class="lbl">Web App URL</label>
+        <input class="inp" id="api-url-input" placeholder="https://script.google.com/macros/s/.../exec" style="font-family:var(--mono);font-size:12.5px">
+        <div class="hint">URL นี้เก็บไว้ในเครื่องนี้เท่านั้น (localStorage)</div>
       </div>
-      <button class="submit-btn" onclick="saveApiUrl()">บันทึก URL</button>
-      <div class="toast" id="settings-toast"></div>
-      <div class="divider"></div>
-      <div class="slabel">วิธีตั้งค่า</div>
-      <div style="font-size:13px;color:var(--mut);line-height:2;">
-        1. สร้าง Google Sheet ใหม่<br>
-        2. Extensions → Apps Script<br>
-        3. วางโค้ดจาก <b style="color:var(--txt)">Code.gs</b> ทั้งหมด<br>
-        4. เปลี่ยน dropdown เป็น <b style="color:var(--txt)">initializeSheets</b> → ▶ เรียกใช้<br>
-        5. Deploy → New deployment → Web App<br>
-        &nbsp;&nbsp;&nbsp;Execute as: <b style="color:var(--txt)">Me</b> | Who has access: <b style="color:var(--txt)">Anyone</b><br>
-        6. Copy URL มาวางด้านบน → บันทึก
+      <div class="btn-row">
+        <button class="btn" onclick="saveApiUrl()">บันทึก URL</button>
+        <button class="btn btn-2 btn-sm" style="min-height:48px" onclick="resetApiUrl()">ค่าเริ่มต้น</button>
       </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ MODAL: CAR ══ -->
-<div class="modal-bg" id="modal-car">
-  <div class="modal">
-    <div class="modal-title" id="modal-car-title">เพิ่มรถ</div>
-    <input type="hidden" id="car-edit-id">
-    <div class="fgrp"><label class="flbl">ชื่อรถ</label><input class="finput" id="car-name" placeholder="เช่น รถคันที่ 1"></div>
-    <div class="fgrp"><label class="flbl">ทะเบียน</label><input class="finput" id="car-plate" placeholder="เช่น กข-1234"></div>
-    <div class="fgrp date-row">
-      <div><label class="flbl">ยี่ห้อ</label><input class="finput" id="car-brand" placeholder="Toyota"></div>
-      <div><label class="flbl">รุ่น</label><input class="finput" id="car-model" placeholder="Fortuner"></div>
-    </div>
-    <div class="fgrp date-row">
-      <div><label class="flbl">เลขไมล์ปัจจุบัน</label><input class="finput" id="car-miles" type="number" placeholder="0"></div>
-      <div><label class="flbl">รอบเซอร์วิส (กม.)</label><input class="finput" id="car-interval" type="number" placeholder="5000"></div>
-    </div>
-    <div style="background:var(--sur2);border-radius:8px;padding:12px 14px;margin-bottom:14px;">
-      <div style="font-size:11px;font-family:var(--mono);color:var(--mut);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;">เซอร์วิสถัดไป — ระบุอย่างใดอย่างหนึ่ง</div>
-      <div class="fgrp" style="margin-bottom:10px;">
-        <label class="flbl">เลขไมล์ที่จะเข้าเซอร์วิส (กม.)</label>
-        <input class="finput" id="car-next-svc-miles" type="number" placeholder="เช่น 50000">
-        <div class="hint">ถ้าไม่ระบุ ระบบจะคำนวณจาก เลขไมล์ปัจจุบัน + รอบเซอร์วิส</div>
-      </div>
-      <div class="fgrp" style="margin-bottom:0">
-        <label class="flbl">วันที่นัดเข้าเซอร์วิส</label>
-        <input class="finput" id="car-svc-date" type="date">
-        <div class="hint">ถ้าไม่ระบุ ระบบจะประมาณจากอัตราการใช้งานเฉลี่ยต่อวัน</div>
+      <div class="box" style="margin-top:18px;margin-bottom:0">
+        <div class="box-t">วิธีตั้งค่า</div>
+        <ol style="font-size:13px;color:var(--text-2);line-height:2;padding-left:18px">
+          <li>สร้าง Google Sheet ใหม่</li>
+          <li>Extensions → Apps Script</li>
+          <li>วางโค้ดจาก <b style="color:var(--text)">Code.gs</b> ทั้งหมด</li>
+          <li>เลือก <b style="color:var(--text)">initializeSheets</b> → ▶ เรียกใช้</li>
+          <li>Deploy → New deployment → Web App<br>
+              <span style="font-size:12px">Execute as: <b style="color:var(--text)">Me</b> · Who has access: <b style="color:var(--text)">Anyone</b></span></li>
+          <li>คัดลอก URL มาวางด้านบน → บันทึก</li>
+        </ol>
       </div>
     </div>
-    <div class="fgrp">
-      <label class="flbl">ค้นหารูปรถ</label>
-      <div style="display:flex;gap:8px">
-        <input class="finput" id="car-img-search" placeholder="เช่น Toyota Fortuner 2023" style="flex:1">
-        <button style="padding:9px 14px;background:var(--by);color:#fff;border:none;border-radius:8px;font-size:13px;white-space:nowrap" onclick="searchCarImages()">ค้นหา</button>
-      </div>
-      <div class="search-results" id="search-results"></div>
-      <div style="margin-top:10px">
-        <label class="flbl">หรือวาง URL รูปโดยตรง</label>
-        <input class="finput" id="car-img-url" placeholder="https://..." oninput="previewImg()">
-      </div>
-      <img id="car-img-preview" class="img-preview" src="" alt="preview" onerror="this.style.display='none'">
-    </div>
-    <div class="modal-btns">
-      <button class="mcancel" onclick="closeModal('modal-car')">ยกเลิก</button>
-      <button class="mok" onclick="submitCar()">บันทึก</button>
-    </div>
   </div>
 </div>
 
-<!-- ══ MODAL: CAR DELETE ══ -->
-<div class="modal-bg" id="modal-car-del">
-  <div class="modal">
-    <div class="modal-title">ลบรถออกจากระบบ?</div>
-    <input type="hidden" id="car-del-id">
-    <p style="font-size:13px;color:var(--mut);margin-bottom:4px">รถ: <b id="car-del-name"></b></p>
-    <p style="font-size:12px;color:var(--dn)">ข้อมูลการจองและเลขไมล์ใน Sheet จะยังคงอยู่</p>
-    <div class="modal-btns">
-      <button class="mcancel" onclick="closeModal('modal-car-del')">ยกเลิก</button>
-      <button class="mdanger" onclick="confirmDeleteCar()">ลบรถ</button>
-    </div>
-  </div>
-</div>
+<!-- ══════════ BOTTOM NAV ══════════ -->
+<nav class="btmnav" id="btmnav"></nav>
 
-<!-- ══ MODAL: MEMBER ══ -->
-<div class="modal-bg" id="modal-member">
-  <div class="modal">
-    <div class="modal-title" id="modal-member-title">เพิ่มสมาชิก</div>
-    <input type="hidden" id="mem-edit-id">
-    <div class="fgrp"><label class="flbl">ชื่อ-นามสกุล</label><input class="finput" id="mem-name" placeholder="สมชาย ใจดี"></div>
-    <div class="fgrp"><label class="flbl">ทีม</label><input class="finput" id="mem-team" placeholder="เช่น ทีม A"></div>
-    <div class="fgrp">
-      <label class="flbl">บทบาท</label>
-      <select class="finput" id="mem-role">
-        <option value="member">สมาชิก</option>
-        <option value="driver">คนขับ</option>
-        <option value="admin">Admin</option>
-      </select>
-    </div>
-    <div class="modal-btns">
-      <button class="mcancel" onclick="closeModal('modal-member')">ยกเลิก</button>
-      <button class="mok" onclick="submitMember()">บันทึก</button>
-    </div>
-  </div>
-</div>
+<!-- ══════════ TOASTS ══════════ -->
+<div class="toastbox" id="toastbox"></div>
 
-<!-- ══ MODAL: MEMBER DELETE ══ -->
-<div class="modal-bg" id="modal-member-del">
-  <div class="modal">
-    <div class="modal-title">ลบสมาชิก?</div>
-    <input type="hidden" id="mem-del-id">
-    <p style="font-size:13px;color:var(--mut)">สมาชิก: <b id="mem-del-name"></b></p>
-    <div class="modal-btns">
-      <button class="mcancel" onclick="closeModal('modal-member-del')">ยกเลิก</button>
-      <button class="mdanger" onclick="confirmDeleteMember()">ลบ</button>
+<!-- ══════════ MODALS ══════════ -->
+<div class="mbg" id="modal-car"><div class="modal">
+  <div class="m-grip"></div>
+  <div class="m-hd"><div class="m-t" id="modal-car-title">เพิ่มรถ</div><button class="m-x" onclick="closeModal('modal-car')">×</button></div>
+  <input type="hidden" id="car-edit-id">
+  <div class="fg"><label class="lbl">ชื่อรถ</label><input class="inp" id="car-name" placeholder="เช่น รถคันที่ 1"></div>
+  <div class="fg"><label class="lbl">ทะเบียน</label><input class="inp" id="car-plate" placeholder="เช่น กข-1234"></div>
+  <div class="fg grid2">
+    <div><label class="lbl">ยี่ห้อ</label><input class="inp" id="car-brand" placeholder="Toyota"></div>
+    <div><label class="lbl">รุ่น</label><input class="inp" id="car-model" placeholder="Fortuner"></div>
+  </div>
+  <div class="fg grid2">
+    <div><label class="lbl">เลขไมล์ปัจจุบัน</label><input class="inp" id="car-miles" type="number" inputmode="numeric" placeholder="0"></div>
+    <div><label class="lbl">รอบเซอร์วิส (กม.)</label><input class="inp" id="car-interval" type="number" inputmode="numeric" placeholder="5000"></div>
+  </div>
+  <div class="box">
+    <div class="box-t">เซอร์วิสถัดไป — ระบุอย่างใดอย่างหนึ่งหรือทั้งคู่</div>
+    <div class="fg">
+      <label class="lbl">เลขไมล์ที่จะเข้าเซอร์วิส</label>
+      <input class="inp" id="car-next-svc-miles" type="number" inputmode="numeric" placeholder="เช่น 50000">
+      <div class="hint">ไม่ระบุ = คำนวณจาก เลขไมล์ปัจจุบัน + รอบเซอร์วิส</div>
+    </div>
+    <div class="fg" style="margin-bottom:0">
+      <label class="lbl">วันที่นัดเข้าเซอร์วิส</label>
+      <input class="inp" id="car-svc-date" type="date">
+      <div class="hint">ไม่ระบุ = ประมาณจากอัตราการใช้งานเฉลี่ยต่อวัน</div>
     </div>
   </div>
-</div>
+  <div class="fg">
+    <label class="lbl">URL รูปรถ</label>
+    <input class="inp" id="car-img-url" placeholder="https://..." oninput="previewImg()" style="font-family:var(--mono);font-size:12.5px">
+    <div class="hint">วางลิงก์รูปจากเว็บหรือ Google Drive (ตั้งค่าแชร์เป็นสาธารณะ) — เว้นว่างได้</div>
+    <img id="car-img-preview" class="prev" alt="" onerror="this.classList.remove('show')">
+  </div>
+  <div class="m-btns">
+    <button class="btn btn-2" onclick="closeModal('modal-car')">ยกเลิก</button>
+    <button class="btn" onclick="submitCar()">บันทึก</button>
+  </div>
+</div></div>
 
-<!-- ══ MODAL: EDIT MILE ══ -->
-<div class="modal-bg" id="modal-mile-edit">
-  <div class="modal">
-    <div class="modal-title">แก้ไขรายการเลขไมล์</div>
-    <input type="hidden" id="mile-edit-id">
-    <div class="fgrp"><label class="flbl">เลขไมล์ (กม.)</label><input class="finput" id="mile-edit-val" type="number" style="font-family:var(--mono)"></div>
-    <div class="fgrp"><label class="flbl">หมายเหตุ</label><input class="finput" id="mile-edit-note"></div>
-    <div class="modal-btns">
-      <button class="mcancel" onclick="closeModal('modal-mile-edit')">ยกเลิก</button>
-      <button class="mok" onclick="submitEditMile()">บันทึก</button>
-    </div>
+<div class="mbg" id="modal-car-del"><div class="modal">
+  <div class="m-grip"></div>
+  <div class="m-hd"><div class="m-t">ลบรถออกจากระบบ?</div><button class="m-x" onclick="closeModal('modal-car-del')">×</button></div>
+  <input type="hidden" id="car-del-id">
+  <p class="sub">รถ: <b id="car-del-name" style="color:var(--text)"></b></p>
+  <p style="font-size:12.5px;color:var(--danger);margin-top:6px">ข้อมูลการจองและเลขไมล์ใน Sheet จะยังคงอยู่</p>
+  <div class="m-btns">
+    <button class="btn btn-2" onclick="closeModal('modal-car-del')">ยกเลิก</button>
+    <button class="btn btn-d" onclick="confirmDeleteCar()">ลบรถ</button>
   </div>
-</div>
+</div></div>
 
-<!-- ══ MODAL: EDIT EP ══ -->
-<div class="modal-bg" id="modal-ep-edit">
-  <div class="modal">
-    <div class="modal-title">แก้ไข Easy Pass</div>
-    <input type="hidden" id="ep-edit-id">
-    <div class="fgrp"><label class="flbl">จำนวนเงิน (บาท)</label><input class="finput" id="ep-edit-val" type="number" style="font-family:var(--mono)"></div>
-    <div class="fgrp"><label class="flbl">หมายเหตุ</label><input class="finput" id="ep-edit-note"></div>
-    <div class="modal-btns">
-      <button class="mcancel" onclick="closeModal('modal-ep-edit')">ยกเลิก</button>
-      <button class="mok" onclick="submitEditEp()">บันทึก</button>
-    </div>
+<div class="mbg" id="modal-member"><div class="modal">
+  <div class="m-grip"></div>
+  <div class="m-hd"><div class="m-t" id="modal-member-title">เพิ่มสมาชิก</div><button class="m-x" onclick="closeModal('modal-member')">×</button></div>
+  <input type="hidden" id="mem-edit-id">
+  <div class="fg"><label class="lbl">ชื่อ-นามสกุล</label><input class="inp" id="mem-name" placeholder="สมชาย ใจดี"></div>
+  <div class="fg"><label class="lbl">ทีม</label><input class="inp" id="mem-team" placeholder="เช่น ทีม A" list="team-list"></div>
+  <div class="fg"><label class="lbl">บทบาท</label><select class="inp" id="mem-role">
+    <option value="member">สมาชิก</option><option value="driver">คนขับ</option><option value="admin">Admin</option></select></div>
+  <div class="m-btns">
+    <button class="btn btn-2" onclick="closeModal('modal-member')">ยกเลิก</button>
+    <button class="btn" onclick="submitMember()">บันทึก</button>
   </div>
-</div>
+</div></div>
 
-<!-- ══ MODAL: ADD EP ══ -->
-<div class="modal-bg" id="modal-ep-add">
-  <div class="modal">
-    <div class="modal-title" id="ep-add-title">เติม Easy Pass</div>
-    <input type="hidden" id="ep-add-car">
-    <input type="hidden" id="ep-add-type">
-    <div class="fgrp"><label class="flbl">จำนวนเงิน (บาท)</label><input class="finput" id="ep-add-amount" type="number" placeholder="500" style="font-family:var(--mono);font-size:18px"></div>
-    <div class="fgrp"><label class="flbl">หมายเหตุ</label><input class="finput" id="ep-add-note" placeholder="เช่น เติมรอบเดือน พ.ค."></div>
-    <div class="modal-btns">
-      <button class="mcancel" onclick="closeModal('modal-ep-add')">ยกเลิก</button>
-      <button class="mok" onclick="submitEpAdd()">บันทึก</button>
-    </div>
+<div class="mbg" id="modal-member-del"><div class="modal">
+  <div class="m-grip"></div>
+  <div class="m-hd"><div class="m-t">ลบสมาชิก?</div><button class="m-x" onclick="closeModal('modal-member-del')">×</button></div>
+  <input type="hidden" id="mem-del-id">
+  <p class="sub">สมาชิก: <b id="mem-del-name" style="color:var(--text)"></b></p>
+  <div class="m-btns">
+    <button class="btn btn-2" onclick="closeModal('modal-member-del')">ยกเลิก</button>
+    <button class="btn btn-d" onclick="confirmDeleteMember()">ลบ</button>
   </div>
-</div>
+</div></div>
+
+<div class="mbg" id="modal-mile-edit"><div class="modal">
+  <div class="m-grip"></div>
+  <div class="m-hd"><div class="m-t">แก้ไขรายการเลขไมล์</div><button class="m-x" onclick="closeModal('modal-mile-edit')">×</button></div>
+  <input type="hidden" id="mile-edit-id">
+  <div class="fg"><label class="lbl">เลขไมล์ (กม.)</label><input class="inp inp-big" id="mile-edit-val" type="number" inputmode="numeric"></div>
+  <div class="fg"><label class="lbl">หมายเหตุ</label><input class="inp" id="mile-edit-note"></div>
+  <div class="m-btns">
+    <button class="btn btn-2" onclick="closeModal('modal-mile-edit')">ยกเลิก</button>
+    <button class="btn" onclick="submitEditMile()">บันทึก</button>
+  </div>
+</div></div>
+
+<div class="mbg" id="modal-ep-edit"><div class="modal">
+  <div class="m-grip"></div>
+  <div class="m-hd"><div class="m-t">แก้ไข Easy Pass</div><button class="m-x" onclick="closeModal('modal-ep-edit')">×</button></div>
+  <input type="hidden" id="ep-edit-id">
+  <div class="fg"><label class="lbl">จำนวนเงิน (บาท)</label><input class="inp inp-big" id="ep-edit-val" type="number" inputmode="numeric"></div>
+  <div class="fg"><label class="lbl">หมายเหตุ</label><input class="inp" id="ep-edit-note"></div>
+  <div class="m-btns">
+    <button class="btn btn-2" onclick="closeModal('modal-ep-edit')">ยกเลิก</button>
+    <button class="btn" onclick="submitEditEp()">บันทึก</button>
+  </div>
+</div></div>
+
+<div class="mbg" id="modal-ep-add"><div class="modal">
+  <div class="m-grip"></div>
+  <div class="m-hd"><div class="m-t" id="ep-add-title">เติม Easy Pass</div><button class="m-x" onclick="closeModal('modal-ep-add')">×</button></div>
+  <input type="hidden" id="ep-add-car"><input type="hidden" id="ep-add-type">
+  <div class="fg"><label class="lbl">จำนวนเงิน (บาท)</label><input class="inp inp-big" id="ep-add-amount" type="number" inputmode="numeric" placeholder="500"></div>
+  <div class="fg"><label class="lbl">หมายเหตุ</label><input class="inp" id="ep-add-note" placeholder="เช่น เติมรอบเดือน พ.ค."></div>
+  <div class="m-btns">
+    <button class="btn btn-2" onclick="closeModal('modal-ep-add')">ยกเลิก</button>
+    <button class="btn" onclick="submitEpAdd()">บันทึก</button>
+  </div>
+</div></div>
+
+<div class="mbg" id="tl-day-modal"><div class="modal">
+  <div class="m-grip"></div>
+  <div class="m-hd"><div class="m-t" id="tl-day-title"></div><button class="m-x" onclick="closeModal('tl-day-modal')">×</button></div>
+  <div id="tl-day-events"></div>
+</div></div>
 
 <script>
-// ══ CONFIG ══
+/* ═══════════════════════════════════════════════
+   CONFIG
+   ═══════════════════════════════════════════════ */
 const CFG_KEY = 'fleet_api_url_v2';
-// ── ใส่ URL ของ Apps Script ตรงนี้เลย ทุกเครื่องจะใช้ได้ทันทีโดยไม่ต้องกรอก ──
+const THEME_KEY = 'fleet_theme';
 const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbxWycHIRlYt2MPattFyi0k3pX-ZZSdB08g-J1wRCvGtCryFtJv2fJpD9xVXCCnGMH79/exec';
-let API_URL = localStorage.getItem(CFG_KEY) || DEFAULT_API_URL;
-let db = { cars:[], members:[], bookings:[], miles:[], easypass:[], waitlist:[] };
-let selBook=null, selMile=null, adminMileCar=null, adminEpCar=null;
 
-// ══ UTILS ══
+let API_URL = DEFAULT_API_URL;
+try { API_URL = localStorage.getItem(CFG_KEY) || DEFAULT_API_URL; } catch(e) {}
+
+let db = { cars:[], members:[], bookings:[], miles:[], easypass:[], waitlist:[] };
+let selBook = null, selMile = null, adminMileCar = null, adminEpCar = null;
+let netError = false, firstLoad = true;
+
+const NAV = [
+  { id:'status',   ic:'🚙', lb:'สถานะ',  d:'สถานะรถ' },
+  { id:'timeline', ic:'📅', lb:'ปฏิทิน', d:'ปฏิทิน' },
+  { id:'book',     ic:'📝', lb:'จองรถ',  d:'จองรถ' },
+  { id:'log',      ic:'📍', lb:'บันทึก', d:'บันทึก' },
+  { id:'history',  ic:'📋', lb:'ประวัติ',d:'ประวัติ' },
+];
+
+/* ═══════════════════════════════════════════════
+   UTILS
+   ═══════════════════════════════════════════════ */
 const km  = n => Number(n||0).toLocaleString('th-TH');
 const thb = n => '฿' + Number(n||0).toLocaleString('th-TH');
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-function fdate(s) {
-  if (!s) return '—';
-  // รองรับทั้ง string ISO และ Date object จาก Apps Script
-  const str = (s instanceof Date) ? s.toISOString() : String(s);
-  // ตัด timestamp ออก แล้วแยก y/m/d
-  const parts = str.slice(0,10).split('-');
-  if (parts.length < 3) return str;
-  const [y,m,d] = parts;
-  const mo = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-  return `${+d} ${mo[+m-1]} ${+y+543}`;
+const TH_MO      = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const TH_MO_FULL = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+
+function d10(v){
+  if (!v) return '';
+  if (v instanceof Date) {
+    return `${v.getFullYear()}-${String(v.getMonth()+1).padStart(2,'0')}-${String(v.getDate()).padStart(2,'0')}`;
+  }
+  return String(v).slice(0,10);
 }
-
-function fts(ts) {
+function fdate(s){
+  const p = d10(s).split('-');
+  if (p.length < 3 || !p[0]) return '—';
+  return `${+p[2]} ${TH_MO[+p[1]-1]} ${+p[0]+543}`;
+}
+function fts(ts){
   if (!ts) return '';
   const d = new Date(ts);
-  if (isNaN(d)) return String(ts).slice(0,10);
+  if (isNaN(d)) return d10(ts);
   return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()+543}`;
 }
+function todayStr(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+const initials = n => (n||'?').trim().split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
 
-function initials(name) {
-  return (name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+/* ═══════════════════════════════════════════════
+   THEME
+   ═══════════════════════════════════════════════ */
+(function initTheme(){
+  let t = null;
+  try { t = localStorage.getItem(THEME_KEY); } catch(e){}
+  if (t) document.documentElement.setAttribute('data-theme', t);
+})();
+function toggleTheme(){
+  const cur = document.documentElement.getAttribute('data-theme');
+  const sysDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
+  const next = cur ? (cur === 'dark' ? 'light' : 'dark') : (sysDark ? 'light' : 'dark');
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem(THEME_KEY, next); } catch(e){}
 }
 
-// ══ LOADING ══
-function loading(on) { document.getElementById('lbar').className = on ? 'lbar show' : 'lbar'; }
+/* ═══════════════════════════════════════════════
+   TOAST
+   ═══════════════════════════════════════════════ */
+function toast(msg, kind){
+  const box = document.getElementById('toastbox');
+  const el  = document.createElement('div');
+  el.className = 'tst t-' + (kind || 'ok');
+  el.innerHTML = `<span>${kind==='err'?'⚠':kind==='warn'?'⏳':'✓'}</span><span>${esc(msg)}</span>`;
+  box.appendChild(el);
+  setTimeout(()=>{ el.classList.add('out'); setTimeout(()=>el.remove(), 220); }, 3400);
+}
 
-// ══ API ══
-async function apiGet(params) {
+/* ═══════════════════════════════════════════════
+   API
+   ═══════════════════════════════════════════════ */
+let busy = 0;
+function loading(on){
+  busy = Math.max(0, busy + (on?1:-1));
+  document.getElementById('lbar').className = busy ? 'lbar show' : 'lbar';
+  document.getElementById('refresh-btn').classList.toggle('spin', busy>0);
+}
+
+async function apiGet(params){
   if (!API_URL) return null;
   loading(true);
   try {
     const r = await fetch(API_URL + '?' + new URLSearchParams(params));
     const d = await r.json();
-    loading(false); return d;
-  } catch(e) { loading(false); return null; }
+    netError = false;
+    return d;
+  } catch(e) {
+    netError = true;
+    return null;
+  } finally { loading(false); }
 }
 
-async function apiPost(body) {
-  if (!API_URL) return null;
+async function apiPost(body){
+  if (!API_URL) { toast('ยังไม่ได้ตั้งค่า API URL', 'err'); return null; }
   loading(true);
   try {
-    const r = await fetch(API_URL, { method:'POST', body:JSON.stringify(body) });
+    const r = await fetch(API_URL, { method:'POST', body: JSON.stringify(body) });
     const d = await r.json();
-    loading(false); return d;
-  } catch(e) { loading(false); return null; }
+    netError = false;
+    if (!d || d.error) toast(d?.error || 'บันทึกไม่สำเร็จ', 'err');
+    return d;
+  } catch(e) {
+    netError = true;
+    toast('เชื่อมต่อไม่ได้ — ตรวจสอบอินเทอร์เน็ตหรือ API URL', 'err');
+    return null;
+  } finally { loading(false); }
 }
 
-// ══ CONFIG BANNER ══
-function renderCfgBanner() {
-  const el = document.getElementById('cfg-banner-area');
-  if (API_URL) { el.innerHTML=''; return; }
-  el.innerHTML = `<div class="cfg-banner">
-    <h3>⚙️ ยังไม่ได้ตั้งค่า API</h3>
-    <p>ไปที่ <b>Admin → 🔗 ตั้งค่า API</b> เพื่อใส่ Google Apps Script URL</p>
-  </div>`;
-}
-
-function saveApiUrl() {
-  const val = document.getElementById('api-url-input').value.trim();
-  if (!val) return;
-  API_URL = val;
-  localStorage.setItem(CFG_KEY, val);
-  showToast('settings-toast', '✓ บันทึก URL แล้ว — กำลังโหลดข้อมูล...', true);
-  renderCfgBanner();
-  loadAll();
-}
-
-// ══ LOAD ══
-async function loadAll() {
+/* ═══════════════════════════════════════════════
+   LOAD
+   ═══════════════════════════════════════════════ */
+async function loadAll(manual){
   const data = await apiGet({ action:'getAllData' });
-  if (!data || data.error) return;
-  if (data.cars)     db.cars     = data.cars;
-  if (data.members)  db.members  = data.members;
-  if (data.bookings) db.bookings = data.bookings;
-  if (data.miles)    db.miles    = data.miles;
-  if (data.easypass) db.easypass = data.easypass;
-  if (data.waitlist) db.waitlist = data.waitlist;
+  if (!data || data.error) {
+    firstLoad = false;
+    renderAlerts();
+    renderStatus();
+    if (manual) toast('โหลดข้อมูลไม่สำเร็จ', 'err');
+    return;
+  }
+  ['cars','members','bookings','miles','easypass','waitlist'].forEach(k => {
+    if (data[k]) db[k] = data[k];
+  });
+  firstLoad = false;
   renderAll();
+  if (manual) toast('อัปเดตข้อมูลแล้ว');
 }
 
-function renderAll() {
+function renderAll(){
+  renderAlerts();
+  renderSummary();
   renderStatus();
   renderPicks();
-  renderMileBtns();
+  renderTeamList();
+  renderMilePicks();
   renderEpCards();
   renderAllBookings();
   renderWaitlist();
@@ -685,14 +1015,30 @@ function renderAll() {
   renderAdminMilePicks();
   renderAdminEpPicks();
   renderTimeline();
+  renderNavBadges();
   const el = document.getElementById('api-url-input');
   if (el) el.value = API_URL;
 }
 
-// ══ COMPUTED ══
+function renderAlerts(){
+  const el = document.getElementById('alert-area');
+  let h = '';
+  if (!API_URL) {
+    h += `<div class="banner bn-warn"><span>⚙️</span><div>
+      <h4>ยังไม่ได้ตั้งค่า API</h4>
+      <p>ไปที่ <b>⚙ Admin → 🔗 API</b> เพื่อใส่ Google Apps Script URL</p></div></div>`;
+  } else if (netError) {
+    h += `<div class="banner bn-err"><span>⚠️</span><div>
+      <h4>เชื่อมต่อข้อมูลไม่ได้</h4>
+      <p>ตรวจสอบอินเทอร์เน็ต หรือสิทธิ์การเข้าถึงของ Apps Script แล้วกดปุ่ม ↻ ที่มุมขวาบน</p></div></div>`;
+  }
+  el.innerHTML = h;
+}
 
-// คืนสถานะรถโดยเช็กทั้งระยะกม. และวันที่ — เตือนอันที่ถึงก่อน
-function carSt(car) {
+/* ═══════════════════════════════════════════════
+   COMPUTED
+   ═══════════════════════════════════════════════ */
+function carSt(car){
   const act = db.bookings.find(b => b.carId===car.id && b.status==='active');
   if (act) return { key:'busy', label:'ออกภาคสนาม', bk:act };
 
@@ -703,338 +1049,385 @@ function carSt(car) {
   const remKm = nxt - miles;
   const pct   = itv > 0 ? (miles - lst) / itv : 0;
 
-  // เช็กวันที่ถ้ามี
-  let dateUrgency = 'ok'; // ok / warn / danger
-  let daysLeft = null;
-  if (car.nextSvcDate && String(car.nextSvcDate).length >= 8) {
-    const svcDate = new Date(String(car.nextSvcDate).slice(0,10));
-    const today   = new Date(); today.setHours(0,0,0,0);
-    daysLeft = Math.ceil((svcDate - today) / 86400000);
-    if (daysLeft <= 0)  dateUrgency = 'danger';
-    else if (daysLeft <= 7)  dateUrgency = 'danger';
-    else if (daysLeft <= 30) dateUrgency = 'warn';
+  let dateKey = 'ok', daysLeft = null;
+  const dstr = d10(car.nextSvcDate);
+  if (dstr && dstr.length >= 8) {
+    const svc = new Date(dstr + 'T00:00:00');
+    const t = new Date(); t.setHours(0,0,0,0);
+    daysLeft = Math.ceil((svc - t) / 86400000);
+    if (daysLeft <= 7) dateKey = 'danger';
+    else if (daysLeft <= 30) dateKey = 'warn';
   }
 
-  // สรุปสถานะจากทั้งสองเงื่อนไข — เอาอันที่แย่กว่า
-  const kmKey  = remKm<=0 ? 'danger' : pct>=.85 ? 'danger' : pct>=.65 ? 'warn' : 'ok';
-  const dateKey = dateUrgency;
+  const kmKey = (nxt<=0) ? 'ok' : remKm<=0 ? 'danger' : pct>=.85 ? 'danger' : pct>=.65 ? 'warn' : 'ok';
   const ord = { ok:0, warn:1, danger:2 };
-  const finalKey = ord[kmKey] >= ord[dateKey] ? kmKey : dateKey;
+  const key = ord[kmKey] >= ord[dateKey] ? kmKey : dateKey;
 
-  // label บอกว่าอันไหนที่กดดันกว่า
   let label = 'ว่าง / พร้อม';
-  if (finalKey === 'danger') {
-    if (remKm <= 0 && (daysLeft===null || daysLeft > 0)) label = 'เกินระยะ!';
+  if (key === 'danger') {
+    if (remKm <= 0 && nxt > 0) label = 'เกินระยะ!';
     else if (daysLeft !== null && daysLeft <= 0) label = 'ถึงวันแล้ว!';
-    else label = 'ใกล้มาก';
-  } else if (finalKey === 'warn') {
-    label = 'ติดตาม';
-  }
+    else label = 'ใกล้เซอร์วิส';
+  } else if (key === 'warn') label = 'ติดตาม';
 
-  return { key:finalKey, label, pct, rem:remKm, daysLeft };
+  return { key, label, pct, rem:remKm, daysLeft };
 }
 
-// คำนวณและแสดงข้อมูลเซอร์วิสถัดไป — เช็กทั้ง กม. และวันที่
-function estimateSvcDate(car) {
-  const remKm  = Number(car.nextSvc) - Number(car.miles);
-  const hasDate = car.nextSvcDate && String(car.nextSvcDate).length >= 8;
+function kmPerDay(carId){
+  const logs = db.miles.filter(l=>l.carId===carId).sort((a,b)=>new Date(a.ts)-new Date(b.ts));
+  if (logs.length < 2) return null;
+  const f = logs[0], l = logs[logs.length-1];
+  const days = (new Date(l.ts) - new Date(f.ts)) / 86400000;
+  const dist = Number(l.miles) - Number(f.miles);
+  return (days > 0 && dist > 0) ? dist/days : null;
+}
 
-  // ── ฝั่งกม. ──
-  let milesStr   = remKm > 0 ? `${km(car.nextSvc)} กม. (เหลือ ${km(remKm)} กม.)` : '⚠ เกินระยะแล้ว!';
-  let milesUrgent = remKm <= 0;
+function svcInfo(car){
+  const remKm   = Number(car.nextSvc) - Number(car.miles);
+  const dstr    = d10(car.nextSvcDate);
+  const hasDate = dstr && dstr.length >= 8;
+  const rate    = kmPerDay(car.id);
 
-  // ── ฝั่งวันที่ ──
-  let dateStr   = '—';
-  let dateUrgent = false;
-  let daysLeft  = null;
+  const milesStr    = Number(car.nextSvc) <= 0 ? '— ยังไม่กำหนด'
+                    : remKm > 0 ? `${km(car.nextSvc)} กม. · เหลือ ${km(remKm)}`
+                    : `เกินระยะ ${km(-remKm)} กม.`;
+  const milesUrgent = Number(car.nextSvc) > 0 && remKm <= 0;
+
+  let dateStr = '— ยังไม่กำหนด', dateUrgent = false, daysLeft = null, kmDays = null;
 
   if (hasDate) {
-    const svcDate = new Date(String(car.nextSvcDate).slice(0,10));
-    const today   = new Date(); today.setHours(0,0,0,0);
-    daysLeft = Math.ceil((svcDate - today) / 86400000);
+    const svc = new Date(dstr + 'T00:00:00');
+    const t = new Date(); t.setHours(0,0,0,0);
+    daysLeft = Math.ceil((svc - t) / 86400000);
     dateUrgent = daysLeft <= 7;
-    if (daysLeft < 0)       dateStr = `⚠ เลยกำหนด ${Math.abs(daysLeft)} วันแล้ว!`;
-    else if (daysLeft === 0) dateStr = `วันนี้!`;
-    else                     dateStr = `${fdate(String(car.nextSvcDate).slice(0,10))} (อีก ${daysLeft} วัน)`;
-  } else {
-    // ประมาณจากอัตราการใช้งาน
-    const logs = db.miles.filter(l=>l.carId===car.id).sort((a,b)=>new Date(a.ts)-new Date(b.ts));
-    if (logs.length >= 2 && remKm > 0) {
-      const first=logs[0], last=logs[logs.length-1];
-      const days=(new Date(last.ts)-new Date(first.ts))/86400000;
-      const dist=Number(last.miles)-Number(first.miles);
-      if (days>0&&dist>0) {
-        const kmpd=dist/days;
-        const dl=Math.round(remKm/kmpd);
-        const target=new Date(); target.setDate(target.getDate()+dl);
-        dateStr=`${fdate(target.toISOString().slice(0,10))} (~${dl} วัน, ประมาณ)`;
-      }
-    }
+    dateStr = daysLeft < 0  ? `เลยกำหนด ${Math.abs(daysLeft)} วัน`
+            : daysLeft === 0 ? 'วันนี้!'
+            : `${fdate(dstr)} · อีก ${daysLeft} วัน`;
+  } else if (rate && remKm > 0) {
+    kmDays = Math.round(remKm / rate);
+    const tgt = new Date(); tgt.setDate(tgt.getDate() + kmDays);
+    dateStr = `~${fdate(d10(tgt))} (ประมาณ)`;
   }
 
-  // บอกว่าอันไหนจะถึงก่อน
   let trigger = '';
-  if (hasDate && daysLeft !== null && remKm > 0) {
-    // ประมาณวันถึงกม. จากอัตราการใช้
-    const logs = db.miles.filter(l=>l.carId===car.id).sort((a,b)=>new Date(a.ts)-new Date(b.ts));
-    let kmDays = null;
-    if (logs.length >= 2) {
-      const first=logs[0], last=logs[logs.length-1];
-      const days=(new Date(last.ts)-new Date(first.ts))/86400000;
-      const dist=Number(last.miles)-Number(first.miles);
-      if (days>0&&dist>0) kmDays = Math.round(remKm/(dist/days));
-    }
-    if (kmDays !== null) {
-      trigger = kmDays < daysLeft ? '⚡ ระยะกม.ถึงก่อน' : '⚡ วันที่ถึงก่อน';
-    }
+  if (hasDate && daysLeft !== null && remKm > 0 && rate) {
+    const kd = Math.round(remKm / rate);
+    trigger = kd < daysLeft ? 'ระยะ กม. ถึงก่อน' : 'วันนัดถึงก่อน';
   }
 
-  return { milesStr, dateStr, milesUrgent, dateUrgent, trigger, overdue: milesUrgent || (daysLeft!==null&&daysLeft<=0) };
+  return { milesStr, dateStr, milesUrgent, dateUrgent, trigger, rate };
 }
 
-function epBal(carId) {
-  return db.easypass
-    .filter(e => e.carId===carId)
-    .reduce((s,e) => s + (e.type==='topup' ? +e.amount : -+e.amount), 0);
+const epBal = carId => db.easypass
+  .filter(e => e.carId===carId)
+  .reduce((s,e) => s + (e.type==='topup' ? +e.amount : -+e.amount), 0);
+
+const isAvail = (carId, start, end) => !db.bookings.some(b =>
+  b.carId===carId && b.status==='active' && !(end < d10(b.start) || start > d10(b.end)));
+
+// รูปสำรองเมื่อโหลด URL รูปรถไม่สำเร็จ (inline SVG — ไม่ต้องต่อเน็ต)
+const FB = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="80" height="56">' +
+  '<rect width="80" height="56" fill="#d8d5cb"/>' +
+  '<path d="M18 34h44l-5-10a5 5 0 0 0-4-3H27a5 5 0 0 0-4 3z" fill="#a9a49a"/>' +
+  '<rect x="16" y="33" width="48" height="9" rx="3" fill="#8f8a80"/>' +
+  '<circle cx="27" cy="42" r="4" fill="#6e6a61"/><circle cx="53" cy="42" r="4" fill="#6e6a61"/></svg>');
+
+function carImg(car, cls, phCls){
+  return car.imageUrl
+    ? `<img class="${cls}" src="${esc(car.imageUrl)}" alt="" loading="lazy" onerror="this.onerror=null;this.src=FB">`
+    : `<div class="${phCls}">🚗</div>`;
 }
 
-function isAvail(carId, start, end) {
-  return !db.bookings.some(b =>
-    b.carId===carId && b.status==='active' &&
-    !(end < b.start || start > b.end)
-  );
+/* ═══════════════════════════════════════════════
+   STATUS
+   ═══════════════════════════════════════════════ */
+function renderSummary(){
+  const el = document.getElementById('summary');
+  if (!db.cars.length) { el.innerHTML = ''; return; }
+  let free=0, busyN=0, alertN=0;
+  db.cars.forEach(c => {
+    const s = carSt(c);
+    if (s.key==='busy') busyN++;
+    else if (s.key==='danger') alertN++;
+    else free++;
+  });
+  const epLow = db.cars.filter(c => epBal(c.id) < 100).length;
+  el.innerHTML = `
+    <div class="sm"><div class="sm-v" style="color:var(--ok)">${free}</div><div class="sm-l">ว่าง / พร้อม</div></div>
+    <div class="sm"><div class="sm-v" style="color:var(--info)">${busyN}</div><div class="sm-l">ออกภาคสนาม</div></div>
+    <div class="sm"><div class="sm-v" style="color:${alertN?'var(--danger)':'var(--text-3)'}">${alertN}</div><div class="sm-l">ต้องเซอร์วิส</div></div>
+    <div class="sm"><div class="sm-v" style="color:${epLow?'var(--danger)':'var(--text-3)'}">${epLow}</div><div class="sm-l">EP ยอดต่ำ</div></div>`;
+  document.getElementById('status-sub').textContent =
+    `รถทั้งหมด ${db.cars.length} คัน · ข้อมูล ณ ${new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})} น.`;
 }
 
-function carImgHtml(car, w=64, h=44) {
-  const style = `width:${w}px;height:${h}px;border-radius:6px;object-fit:cover;flex-shrink:0`;
-  if (car.imageUrl)
-    return `<img src="${car.imageUrl}" style="${style}" onerror="this.style.display='none'">`;
-  return `<div style="${style};background:var(--sur2);display:flex;align-items:center;justify-content:center;font-size:${Math.floor(h*0.5)}px">🚗</div>`;
-}
-
-// ══ STATUS PAGE ══
-function renderStatus() {
+function renderStatus(){
   const g = document.getElementById('car-grid');
-  if (!db.cars.length) { g.innerHTML = '<div class="empty">ไม่พบข้อมูลรถ — ตั้งค่า API ก่อน</div>'; return; }
-  g.innerHTML = '';
-  db.cars.forEach(car => {
+  if (firstLoad) return;
+  if (!db.cars.length) {
+    g.innerHTML = `<div class="empty"><div class="ic">🚗</div>
+      ${netError ? 'โหลดข้อมูลไม่ได้ — กด ↻ เพื่อลองใหม่' : 'ยังไม่มีรถในระบบ — เพิ่มได้ที่ ⚙ Admin → รถ'}</div>`;
+    document.getElementById('status-sub').textContent = netError ? 'ออฟไลน์' : 'ยังไม่มีข้อมูล';
+    return;
+  }
+
+  g.innerHTML = db.cars.map(car => {
     const st  = carSt(car);
-    const sk  = st.key;
-    const pct = sk !== 'busy' ? Math.min(st.pct*100, 100).toFixed(0) : 0;
-    const rc  = sk==='ok' ? 'var(--ok)' : sk==='warn' ? '#e6a817' : 'var(--dn)';
+    const k   = st.key;
     const bal = epBal(car.id);
-    const svcInfo  = sk !== 'busy' ? estimateSvcDate(car) : null;
-    const svcColor = sk==='danger' ? 'var(--dn)' : sk==='warn' ? '#e6a817' : 'var(--ok)';
-    const milesColor = svcInfo?.milesUrgent ? 'var(--dn)' : svcColor;
-    const dateColor  = svcInfo?.dateUrgent  ? 'var(--dn)' : svcColor;
+    const low = bal < 100;
 
-    const metHtml = sk !== 'busy'
-      ? `<div class="metrics">
-           <div><div class="mval">${km(car.miles)}</div><div class="mlbl">กม. ปัจจุบัน</div></div>
-           <div><div class="mval" style="color:${rc}">${st.rem>0 ? km(st.rem) : 'เกิน '+km(-st.rem)}</div><div class="mlbl">กม. ถึงเซอร์วิส</div></div>
-         </div>
-         <div class="prog"><div class="pf pf-${sk}" style="width:${pct}%"></div></div>
-         <div class="car-foot"><span>${car.brand||''} ${car.model||''}</span><span>${pct}% ของรอบ</span></div>`
-      : `<div class="metrics"><div><div class="mval">${km(car.miles)}</div><div class="mlbl">กม. ตอนออก</div></div></div>
-         <div class="car-foot"><span>${car.brand||''} ${car.model||''}</span></div>`;
+    let body, rows = '';
 
-    const bkBanner = sk === 'busy'
-      ? `<div class="bk-banner">
-           <div><b>${st.bk.team}</b> — ${st.bk.mission}<br>
-           <span style="font-family:var(--mono);font-size:11px">${fdate(st.bk.start)} → ${fdate(st.bk.end)} · ${st.bk.headcount} คน</span></div>
-           <div style="font-family:var(--mono);font-size:11px;flex-shrink:0">กลับ ${fdate(st.bk.end)}</div>
-         </div>` : '';
+    if (k === 'busy') {
+      body = `<div class="gauge">
+          <div class="g-main"><span class="g-v">${km(car.miles)}</span><span class="g-u">กม. ตอนออก</span></div>
+        </div>`;
+      rows = `<div class="bk-strip">
+          <div><div class="t"><b>${esc(st.bk.team)}</b> — ${esc(st.bk.mission)}</div>
+            <div class="d">${fdate(st.bk.start)} → ${fdate(st.bk.end)} · ${esc(st.bk.headcount)} คน</div></div>
+          <div class="d" style="text-align:right;flex-shrink:0">กลับ<br>${fdate(st.bk.end)}</div>
+        </div>`;
+    } else {
+      const pct = Math.max(0, Math.min(st.pct*100, 100));
+      const s   = svcInfo(car);
+      const remTxt = Number(car.nextSvc) <= 0 ? '—'
+                   : st.rem > 0 ? km(st.rem) : 'เกิน ' + km(-st.rem);
+      const rc = k==='ok' ? 'var(--ok)' : k==='warn' ? 'var(--warn)' : 'var(--danger)';
 
-    const svcBar = sk !== 'busy' && svcInfo
-      ? `<div class="svc-date-bar" style="flex-direction:column;align-items:stretch;gap:6px;padding:10px 16px;">
-           ${svcInfo.trigger ? `<div style="font-size:11px;font-family:var(--mono);color:var(--dn);font-weight:600;margin-bottom:2px">${svcInfo.trigger}</div>` : ''}
-           <div style="display:flex;justify-content:space-between;align-items:center;">
-             <span style="color:var(--mut);font-size:12px;">🔧 ระยะกม.เซอร์วิส</span>
-             <span style="color:${milesColor};font-size:12px;font-family:var(--mono);font-weight:500;text-align:right;max-width:60%">${svcInfo.milesStr}</span>
-           </div>
-           <div style="display:flex;justify-content:space-between;align-items:center;">
-             <span style="color:var(--mut);font-size:12px;">📅 วันที่นัดเซอร์วิส</span>
-             <span style="color:${dateColor};font-size:12px;font-family:var(--mono);font-weight:500;text-align:right;max-width:60%">${svcInfo.dateStr}</span>
-           </div>
-         </div>` : '';
-
-    g.innerHTML += `<div class="card">
-      <div style="display:flex">
-        <div class="car-stripe s-${sk}"></div>
-        <div class="car-body" style="flex:1">
-          <div class="car-r1">
-            <div style="display:flex;align-items:center;gap:10px;flex:1">
-              ${carImgHtml(car)}
-              <div><div class="car-name">${car.name}</div><div class="car-sub">${car.plate}</div></div>
-            </div>
-            <span class="pill p-${sk}">${st.label}</span>
+      body = `<div class="gauge">
+          <div class="g-main"><span class="g-v">${km(car.miles)}</span><span class="g-u">กม.</span></div>
+          <div class="g-side">
+            <div class="g-sv" style="color:${rc}">${remTxt}</div>
+            <div class="g-sl">กม. ถึงเซอร์วิส</div>
           </div>
-          ${metHtml}
+        </div>
+        <div class="track"><div class="fill f-${k}" style="width:${pct.toFixed(0)}%"></div></div>`;
+
+      rows = `
+        <div class="crow">
+          <span class="crow-l">🔧 ระยะเซอร์วิส</span>
+          <span class="crow-v" style="color:${s.milesUrgent?'var(--danger)':'var(--text-2)'}">${esc(s.milesStr)}</span>
+        </div>
+        <div class="crow">
+          <span class="crow-l">📅 วันนัด</span>
+          <span class="crow-v" style="color:${s.dateUrgent?'var(--danger)':'var(--text-2)'}">${esc(s.dateStr)}</span>
+        </div>
+        ${s.trigger ? `<div class="crow"><span class="crow-l">⚡ ถึงก่อน</span><span class="trg">${esc(s.trigger)}</span></div>` : ''}`;
+    }
+
+    return `<div class="cc">
+      <div class="cc-top">
+        ${carImg(car,'cc-img','cc-ph')}
+        <div class="cc-id">
+          <div class="cc-nm">${esc(car.name)}</div>
+          <div class="cc-pl">${esc(car.plate)}</div>
+          <div class="cc-mk">${esc([car.brand,car.model].filter(Boolean).join(' ')) || '&nbsp;'}</div>
+        </div>
+        <span class="pill p-${k}">${esc(st.label)}</span>
+      </div>
+      <div class="cc-body">${body}</div>
+      <div class="cc-rows">${rows}
+        <div class="crow ep-row ${low?'low':''}">
+          <span class="crow-l">💳 EASY PASS</span>
+          <span class="crow-v">${thb(bal)}${low?' ⚠':''}</span>
         </div>
       </div>
-      ${bkBanner}${svcBar}
-      <div class="ep-strip">
-        <span class="ep-lbl">EASY PASS</span>
-        <span class="ep-val ${bal<100?'ep-low':''}">${thb(bal)}${bal<100?' ⚠':''}</span>
-      </div>
     </div>`;
-  });
+  }).join('');
 }
 
-function calcDispatch() {
-  const tkm = parseInt(document.getElementById('disp-km').value)||0;
+function calcDispatch(){
+  const tkm = parseInt(document.getElementById('disp-km').value) || 0;
   const el  = document.getElementById('disp-results');
-  if (!tkm) { el.innerHTML=''; return; }
-  const ord = {'dr-ok':0,'dr-warn':1,'dr-busy':2,'dr-no':3};
+  if (!tkm) { el.innerHTML = ''; return; }
+  if (!db.cars.length) { el.innerHTML = '<div class="empty">ยังไม่มีรถในระบบ</div>'; return; }
+
+  const ord = { 'r-ok':0, 'r-warn':1, 'r-busy':2, 'r-no':3 };
   const rows = db.cars.map(car => {
     const st = carSt(car);
-    if (st.key==='busy')
-      return { car, cls:'dr-busy', dot:'dd-busy', msg:`${st.bk.team} ใช้อยู่ — กลับ ${fdate(st.bk.end)}` };
-    const rem   = Number(car.nextSvc) - Number(car.miles);
-    const after = rem - tkm;
-    if (after < 0)   return { car, cls:'dr-no',   dot:'dd-no',   msg:`จะเกินระยะ ${km(-after)} กม. ระหว่างทาง` };
-    if (after < 500) return { car, cls:'dr-warn', dot:'dd-warn', msg:`หลังกลับเหลือ ${km(after)} กม. — ควรเข้าศูนย์` };
-    return               { car, cls:'dr-ok',   dot:'dd-ok',   msg:`ปลอดภัย — หลังกลับเหลือ ${km(after)} กม.` };
-  }).sort((a,b) => ord[a.cls]-ord[b.cls]);
-  el.innerHTML = rows.map(r => `<div class="drec ${r.cls}">
-    <div class="ddot ${r.dot}"></div>
-    <div>
-      <div style="font-size:13px;font-weight:600">${r.car.name}
-        <span style="font-family:var(--mono);font-size:10px;opacity:.6">${r.car.plate}</span>
-      </div>
-      <div style="font-size:12px;color:var(--mut)">${r.msg}</div>
-    </div>
+    if (st.key === 'busy')
+      return { car, cls:'r-busy', dot:'d-busy', msg:`${st.bk.team} ใช้อยู่ — กลับ ${fdate(st.bk.end)}` };
+    if (Number(car.nextSvc) <= 0)
+      return { car, cls:'r-ok', dot:'d-ok', msg:'ยังไม่กำหนดรอบเซอร์วิส — ใช้ได้' };
+    const after = (Number(car.nextSvc) - Number(car.miles)) - tkm;
+    if (after < 0)   return { car, cls:'r-no',   dot:'d-no',   msg:`จะเกินระยะ ${km(-after)} กม. ระหว่างทาง` };
+    if (after < 500) return { car, cls:'r-warn', dot:'d-warn', msg:`หลังกลับเหลือ ${km(after)} กม. — ควรเข้าศูนย์` };
+    return                 { car, cls:'r-ok',   dot:'d-ok',   msg:`ปลอดภัย — หลังกลับเหลือ ${km(after)} กม.` };
+  }).sort((a,b) => ord[a.cls] - ord[b.cls]);
+
+  el.innerHTML = rows.map(r => `<div class="rec ${r.cls}">
+    <span class="dot ${r.dot}"></span>
+    <div><div class="rec-n">${esc(r.car.name)} <span class="num" style="font-size:10.5px;opacity:.6">${esc(r.car.plate)}</span></div>
+    <div class="rec-m">${esc(r.msg)}</div></div>
   </div>`).join('');
 }
 
-// ══ BOOKING ══
-function renderPicks() {
+/* ═══════════════════════════════════════════════
+   BOOKING
+   ═══════════════════════════════════════════════ */
+function renderTeamList(){
+  const teams = [...new Set([
+    ...db.members.map(m=>m.team),
+    ...db.bookings.map(b=>b.team),
+    ...db.miles.map(m=>m.team),
+  ].filter(Boolean))].sort();
+  document.getElementById('team-list').innerHTML =
+    teams.map(t=>`<option value="${esc(t)}">`).join('');
+}
+
+function renderPicks(){
   const el = document.getElementById('car-picks');
   if (!el) return;
+  if (!db.cars.length) { el.innerHTML = '<div class="empty">ยังไม่มีรถในระบบ</div>'; return; }
   const s = document.getElementById('b-start')?.value;
   const e = document.getElementById('b-end')?.value;
   el.innerHTML = db.cars.map(car => {
     const avail = (!s||!e) || isAvail(car.id, s, e);
-    return `<button class="cpick${selBook===car.id?' sel':''}" onclick="pickCar('${car.id}')" ${!avail?'disabled':''}>
-      <div style="display:flex;align-items:center;gap:8px">
-        ${carImgHtml(car,40,28)}
-        <div>
-          <div style="font-size:14px;font-weight:600;color:var(--txt)">${car.name}</div>
-          <div style="font-family:var(--mono);font-size:11px;color:var(--mut)">${car.plate} · ${km(car.miles)} กม.</div>
-        </div>
-      </div>
-      <div>${avail
-        ? '<span style="font-size:12px;font-weight:600;color:var(--ok)">ว่าง</span>'
-        : '<span style="font-size:11px;color:var(--by);font-family:var(--mono)">ไม่ว่างช่วงนั้น</span>'}</div>
+    if (!avail && selBook === car.id) selBook = null;
+    return `<button class="pick${selBook===car.id?' sel':''}" onclick="pickCar('${esc(car.id)}')" ${!avail?'disabled':''}>
+      <span class="pick-l">${carImg(car,'pick-img','pick-ph')}
+        <span><span class="pick-n">${esc(car.name)}</span><br>
+        <span class="pick-s">${esc(car.plate)} · ${km(car.miles)} กม.</span></span></span>
+      <span class="pick-r">${avail
+        ? '<span class="pill p-ok">ว่าง</span>'
+        : '<span class="pill p-busy">ไม่ว่างช่วงนั้น</span>'}</span>
     </button>`;
   }).join('');
 }
+function pickCar(id){ selBook = id; renderPicks(); }
 
-function pickCar(id) { selBook=id; renderPicks(); }
-
-async function submitBooking() {
+async function submitBooking(){
   const team    = document.getElementById('b-team').value.trim();
   const mission = document.getElementById('b-mission').value.trim();
   const start   = document.getElementById('b-start').value;
   const end     = document.getElementById('b-end').value;
-  const count   = parseInt(document.getElementById('b-count').value)||0;
-  if (!selBook||!team||!mission||!start||!end||!count) { alert('กรุณากรอกข้อมูลให้ครบ'); return; }
-  if (end < start) { alert('วันกลับต้องหลังวันออก'); return; }
+  const count   = parseInt(document.getElementById('b-count').value) || 0;
+
+  if (!selBook)  { toast('เลือกรถก่อน', 'err'); return; }
+  if (!team || !mission || !start || !end || !count) { toast('กรุณากรอกข้อมูลให้ครบ', 'err'); return; }
+  if (end < start) { toast('วันกลับต้องหลังวันออก', 'err'); return; }
 
   if (!isAvail(selBook, start, end)) {
-    const r = await apiPost({ action:'addWaitlist', data:{team,mission,start,end,headcount:count} });
-    if (r?.ok) { showToast('book-toast','⏳ รถไม่ว่างช่วงนั้น — เพิ่มเข้าคิวรอแล้ว',false); await loadAll(); }
+    const r = await apiPost({ action:'addWaitlist', data:{ team, mission, start, end, headcount:count } });
+    if (r?.ok) { toast('รถไม่ว่างช่วงนั้น — เพิ่มเข้าคิวรอแล้ว', 'warn'); await loadAll(); subTab('bk',2); }
     return;
   }
-  const car = db.cars.find(c=>c.id===selBook);
-  const r = await apiPost({ action:'addBooking', data:{carId:selBook,team,mission,start,end,headcount:count,startMiles:car.miles} });
+
+  const car = db.cars.find(c => c.id === selBook);
+  const r = await apiPost({ action:'addBooking', data:{
+    carId:selBook, team, mission, start, end, headcount:count, startMiles:car.miles } });
   if (r?.ok) {
-    showToast('book-toast',`✓ จองสำเร็จ — ${car.name} · ${fdate(start)} ถึง ${fdate(end)}`,true);
+    toast(`จองสำเร็จ — ${car.name} · ${fdate(start)} ถึง ${fdate(end)}`);
     selBook = null;
     ['b-team','b-mission','b-start','b-end','b-count'].forEach(i=>document.getElementById(i).value='');
     await loadAll();
   }
 }
 
-function renderWaitlist() {
-  const wls = db.waitlist||[];
-  const sec = document.getElementById('wl-section');
-  if (!sec) return;
-  if (!wls.length) { sec.style.display='none'; return; }
-  sec.style.display = 'block';
-  document.getElementById('wl-list').innerHTML = wls.map((w,i) => `<div class="wl-card">
-    <div style="font-family:var(--mono);font-size:12px;color:var(--mut);min-width:22px">#${i+1}</div>
-    <div style="flex:1">
-      <div style="font-size:14px;font-weight:600">${w.team}</div>
-      <div style="font-size:12px;color:var(--mut)">${w.mission} · ${w.headcount} คน · ${fdate(w.start)}–${fdate(w.end)}</div>
-    </div>
-    <button class="wl-del" onclick="delWL('${w.id}')">✕</button>
-  </div>`).join('');
+function renderWaitlist(){
+  const wls = db.waitlist || [];
+  document.getElementById('wl-count').textContent = wls.length ? `(${wls.length})` : '';
+  const el = document.getElementById('wl-list');
+  if (!wls.length) { el.innerHTML = '<div class="empty"><div class="ic">✅</div>ไม่มีคิวรอ</div>'; return; }
+  el.innerHTML = `<div class="lst">` + wls.map((w,i) => `<div class="li">
+    <div class="num" style="font-size:12px;color:var(--text-3);min-width:24px">#${i+1}</div>
+    <div class="li-m"><div class="li-t">${esc(w.team)}</div>
+      <div class="li-s">${esc(w.mission)} · ${esc(w.headcount)} คน · ${fdate(w.start)}–${fdate(w.end)}</div></div>
+    <button class="ib del" onclick="delWL('${esc(w.id)}')">✕</button>
+  </div>`).join('') + `</div>`;
+}
+async function delWL(id){
+  const r = await apiPost({ action:'deleteWaitlist', data:{ id } });
+  if (r?.ok) { toast('ลบออกจากคิวแล้ว'); await loadAll(); }
 }
 
-async function delWL(id) {
-  await apiPost({ action:'deleteWaitlist', data:{id} });
-  await loadAll();
-}
-
-// ══ MILEAGE ══
-function renderMileBtns() {
-  const el = document.getElementById('mile-btns');
+function renderAllBookings(){
+  const el = document.getElementById('all-bookings');
   if (!el) return;
-  const cmap = { ok:'var(--ok)', warn:'#e6a817', danger:'var(--dn)', busy:'var(--by)' };
+  const bks = [...db.bookings].reverse();
+  if (!bks.length) { el.innerHTML = '<div class="empty"><div class="ic">📋</div>ยังไม่มีการจอง</div>'; return; }
+  const pm = { active:'p-busy', done:'p-ok', cancelled:'p-mut' };
+  const tm = { active:'กำลังใช้', done:'เสร็จแล้ว', cancelled:'ยกเลิก' };
+  el.innerHTML = bks.map(bk => {
+    const car = db.cars.find(c => c.id === bk.carId);
+    return `<div class="bkc">
+      <div class="bkc-h">
+        <div style="min-width:0">
+          <div class="li-t">${esc(car?.name || '—')} <span class="num" style="font-size:10.5px;color:var(--text-3)">${esc(car?.plate||'')}</span></div>
+          <div class="li-s">${esc(bk.team)} · ${esc(bk.headcount)} คน</div>
+        </div>
+        <span class="pill ${pm[bk.status]||'p-mut'}">${tm[bk.status]||esc(bk.status)}</span>
+      </div>
+      <div style="font-size:13.5px">${esc(bk.mission)}</div>
+      <div class="bkc-meta">${fdate(bk.start)} → ${fdate(bk.end)}</div>
+      ${bk.status==='active' ? `<div class="bkc-acts">
+        <button class="btn btn-2 btn-sm" style="flex:1;color:var(--ok);border-color:var(--ok-bd)" onclick="updateBkStatus('${esc(bk.id)}','done')">✓ คืนรถ</button>
+        <button class="btn btn-2 btn-sm" style="flex:1;color:var(--danger);border-color:var(--danger-bd)" onclick="updateBkStatus('${esc(bk.id)}','cancelled')">ยกเลิก</button>
+      </div>` : ''}
+    </div>`;
+  }).join('');
+}
+async function updateBkStatus(id, status){
+  const r = await apiPost({ action:'updateBooking', data:{ id, status } });
+  if (r?.ok) { toast(status==='done' ? 'บันทึกคืนรถแล้ว' : 'ยกเลิกการจองแล้ว'); await loadAll(); }
+}
+
+/* ═══════════════════════════════════════════════
+   MILEAGE
+   ═══════════════════════════════════════════════ */
+function renderMilePicks(){
+  const el = document.getElementById('mile-picks');
+  if (!el) return;
+  if (!db.cars.length) { el.innerHTML = '<div class="empty">ยังไม่มีรถในระบบ</div>'; return; }
+  const cm = { ok:'var(--ok)', warn:'var(--warn)', danger:'var(--danger)', busy:'var(--info)' };
   el.innerHTML = db.cars.map(car => {
     const st = carSt(car);
-    return `<button class="cpick${selMile===car.id?' sel':''}" onclick="pickMileCar('${car.id}')">
-      <div style="display:flex;align-items:center;gap:8px">
-        ${carImgHtml(car,40,28)}
-        <div>
-          <div style="font-size:14px;font-weight:600;color:var(--txt)">${car.name}</div>
-          <div style="font-family:var(--mono);font-size:11px;color:var(--mut)">${car.plate}</div>
-        </div>
-      </div>
-      <div style="text-align:right">
-        <div style="font-family:var(--mono);font-size:14px">${km(car.miles)} กม.</div>
-        <div style="font-size:11px;color:${cmap[st.key]};margin-top:2px">${st.label}</div>
-      </div>
+    return `<button class="pick${selMile===car.id?' sel':''}" onclick="pickMileCar('${esc(car.id)}')">
+      <span class="pick-l">${carImg(car,'pick-img','pick-ph')}
+        <span><span class="pick-n">${esc(car.name)}</span><br><span class="pick-s">${esc(car.plate)}</span></span></span>
+      <span class="pick-r"><span class="li-v">${km(car.miles)} กม.</span><br>
+        <span style="font-size:11px;color:${cm[st.key]}">${esc(st.label)}</span></span>
     </button>`;
   }).join('');
 }
 
-function pickMileCar(id) {
+function pickMileCar(id){
   selMile = id;
-  renderMileBtns();
-  const car = db.cars.find(c=>c.id===id);
+  renderMilePicks();
+  const car = db.cars.find(c => c.id === id);
   document.getElementById('mile-form').style.display = 'block';
   document.getElementById('m-miles').placeholder = `ปัจจุบัน ${km(car.miles)} กม.`;
-  document.getElementById('m-err').textContent = '';
   document.getElementById('m-miles').value = '';
+  document.getElementById('m-err').textContent = '';
   renderMileHistory(id);
 }
 
-function renderMileHistory(carId) {
-  const logs = db.miles.filter(l=>l.carId===carId).slice().reverse().slice(0,10);
+function renderMileHistory(carId){
+  const logs = db.miles.filter(l => l.carId===carId).slice().reverse().slice(0,10);
   const el = document.getElementById('mile-history');
-  if (!logs.length) { el.innerHTML='<div class="empty">ยังไม่มีประวัติ</div>'; return; }
-  el.innerHTML = logs.map(l => `<div class="lrow">
-    <div><div class="lrow-name">${l.team}</div><div class="lrow-note">${l.note||'—'}</div></div>
-    <div style="text-align:right"><div class="lrow-val">${km(l.miles)} กม.</div><div class="lrow-date">${fts(l.ts)}</div></div>
-  </div>`).join('');
+  if (!logs.length) { el.innerHTML = '<div class="empty">ยังไม่มีประวัติ</div>'; return; }
+  el.innerHTML = `<div class="lst">` + logs.map(l => `<div class="li">
+    <div class="li-m"><div class="li-t">${esc(l.team)}</div><div class="li-s">${esc(l.note||'—')}</div></div>
+    <div class="li-r"><div class="li-v">${km(l.miles)} กม.</div><div class="li-d">${fts(l.ts)}</div></div>
+  </div>`).join('') + `</div>`;
 }
 
-async function submitMile() {
+async function submitMile(){
   const miles = parseInt(document.getElementById('m-miles').value);
   const team  = document.getElementById('m-team').value.trim();
   const note  = document.getElementById('m-note').value.trim();
-  if (!selMile||!miles||!team) { alert('กรอกข้อมูลให้ครบ'); return; }
-  const car = db.cars.find(c=>c.id===selMile);
+  if (!selMile || !miles || !team) { toast('กรอกข้อมูลให้ครบ', 'err'); return; }
+  const car = db.cars.find(c => c.id === selMile);
   if (miles < Number(car.miles)) {
     document.getElementById('m-err').textContent = `ต้องไม่น้อยกว่า ${km(car.miles)} กม.`;
     return;
   }
   document.getElementById('m-err').textContent = '';
-  const r = await apiPost({ action:'addMile', data:{carId:selMile,miles,team,note} });
+  const r = await apiPost({ action:'addMile', data:{ carId:selMile, miles, team, note } });
   if (r?.ok) {
-    showToast('mile-toast','✓ บันทึกเรียบร้อย',true);
+    toast(`บันทึกแล้ว — ${car.name} ${km(miles)} กม.`);
     document.getElementById('m-miles').value = '';
     document.getElementById('m-note').value  = '';
     await loadAll();
@@ -1042,48 +1435,46 @@ async function submitMile() {
   }
 }
 
-// ══ EASY PASS ══
-function renderEpCards() {
+/* ═══════════════════════════════════════════════
+   EASY PASS
+   ═══════════════════════════════════════════════ */
+function renderEpCards(){
   const el = document.getElementById('ep-cards');
-  if (!el||!db.cars.length) return;
+  if (!el) return;
+  if (!db.cars.length) { el.innerHTML = '<div class="empty">ยังไม่มีรถในระบบ</div>'; return; }
   el.innerHTML = db.cars.map(car => {
     const bal  = epBal(car.id);
-    const isLow = bal < 100;
-    const logs = db.easypass.filter(e=>e.carId===car.id).slice().reverse().slice(0,8);
-    return `<div class="ep-card">
-      <div class="ep-header">
-        <div style="display:flex;align-items:center;gap:10px">
-          ${carImgHtml(car,52,36)}
-          <div>
-            <div style="font-size:15px;font-weight:600">${car.name}</div>
-            <div style="font-family:var(--mono);font-size:11px;color:var(--mut)">${car.plate}</div>
-          </div>
+    const low  = bal < 100;
+    const logs = db.easypass.filter(e => e.carId===car.id).slice().reverse().slice(0,8);
+    return `<div class="card" style="margin-bottom:12px">
+      <div class="cc-top" style="padding-bottom:14px">
+        ${carImg(car,'cc-img','cc-ph')}
+        <div class="cc-id">
+          <div class="cc-nm">${esc(car.name)}</div>
+          <div class="cc-pl">${esc(car.plate)}</div>
         </div>
         <div style="text-align:right">
-          <div class="ep-balance-big" style="color:${isLow?'var(--dn)':'var(--ep)'}">${thb(bal)}</div>
-          <div style="font-size:11px;color:var(--mut)">${isLow?'⚠ ยอดต่ำ':'ยอดคงเหลือ'}</div>
+          <div class="num" style="font-size:25px;font-weight:600;line-height:1.15;color:${low?'var(--danger)':'var(--violet)'}">${thb(bal)}</div>
+          <div style="font-size:11px;color:var(--text-3)">${low?'⚠ ยอดต่ำ':'ยอดคงเหลือ'}</div>
         </div>
       </div>
-      <div class="ep-actions">
-        <button class="ep-btn topup" onclick="openEpAdd('${car.id}','topup')">＋ เติมเงิน</button>
-        <button class="ep-btn" onclick="openEpAdd('${car.id}','use')">− บันทึกใช้งาน</button>
+      <div style="display:flex;gap:9px;padding:0 16px 14px">
+        <button class="btn btn-sm" style="flex:1;background:var(--violet-bg);color:var(--violet);border-color:var(--violet-bd)" onclick="openEpAdd('${esc(car.id)}','topup')">＋ เติมเงิน</button>
+        <button class="btn btn-2 btn-sm" style="flex:1" onclick="openEpAdd('${esc(car.id)}','use')">− บันทึกใช้งาน</button>
       </div>
-      <div>${logs.length
-        ? logs.map(l=>`<div class="ep-row">
-            <div>
-              <div style="font-size:13px;font-weight:500">${l.type==='topup'?'เติมเงิน':'ใช้ทางด่วน'}</div>
-              <div style="font-size:12px;color:var(--mut)">${l.note||'—'} · ${fts(l.ts)}</div>
-            </div>
-            <span class="${l.type==='topup'?'ep-plus':'ep-minus'}">${l.type==='topup'?'+':'-'}${thb(l.amount)}</span>
-          </div>`).join('')
-        : '<div class="empty" style="padding:14px">ยังไม่มีประวัติ</div>'}</div>
+      ${logs.length ? `<div style="border-top:1px solid var(--border)">` + logs.map(l => `<div class="li">
+          <div class="li-m"><div class="li-t" style="font-size:13.5px">${l.type==='topup'?'เติมเงิน':'ใช้ทางด่วน'}</div>
+            <div class="li-s">${esc(l.note||'—')} · ${fts(l.ts)}</div></div>
+          <span class="${l.type==='topup'?'plus':'minus'}">${l.type==='topup'?'+':'−'}${thb(l.amount)}</span>
+        </div>`).join('') + `</div>`
+      : `<div class="li" style="border-top:1px solid var(--border);color:var(--text-3);font-size:13px;justify-content:center">ยังไม่มีประวัติ</div>`}
     </div>`;
   }).join('');
 }
 
-function openEpAdd(carId, type) {
-  const car = db.cars.find(c=>c.id===carId);
-  document.getElementById('ep-add-car').value = carId;
+function openEpAdd(carId, type){
+  const car = db.cars.find(c => c.id === carId);
+  document.getElementById('ep-add-car').value  = carId;
   document.getElementById('ep-add-type').value = type;
   document.getElementById('ep-add-title').textContent =
     type==='topup' ? `เติม Easy Pass — ${car.name}` : `บันทึกใช้ทางด่วน — ${car.name}`;
@@ -1092,750 +1483,645 @@ function openEpAdd(carId, type) {
   openModal('modal-ep-add');
 }
 
-async function submitEpAdd() {
+async function submitEpAdd(){
   const carId  = document.getElementById('ep-add-car').value;
   const type   = document.getElementById('ep-add-type').value;
   const amount = parseInt(document.getElementById('ep-add-amount').value);
   const note   = document.getElementById('ep-add-note').value.trim();
-  if (!amount||amount<=0) { alert('กรอกจำนวนเงิน'); return; }
-  const r = await apiPost({ action:'addEasyPass', data:{carId,type,amount,note} });
-  if (r?.ok) { closeModal('modal-ep-add'); await loadAll(); }
+  if (!amount || amount <= 0) { toast('กรอกจำนวนเงิน', 'err'); return; }
+  const r = await apiPost({ action:'addEasyPass', data:{ carId, type, amount, note } });
+  if (r?.ok) { closeModal('modal-ep-add'); toast(type==='topup'?'เติมเงินแล้ว':'บันทึกการใช้แล้ว'); await loadAll(); }
 }
 
-// ══ BOOKINGS LIST ══
-function renderAllBookings() {
-  const el = document.getElementById('all-bookings');
-  if (!el) return;
-  const bks = [...db.bookings].reverse();
-  if (!bks.length) { el.innerHTML='<div class="empty">ยังไม่มีการจอง</div>'; return; }
-  const pm = { active:'p-busy', done:'p-ok', cancelled:'p-warn' };
-  const tm = { active:'กำลังใช้', done:'เสร็จแล้ว', cancelled:'ยกเลิก' };
-  el.innerHTML = bks.map(bk => {
-    const car = db.cars.find(c=>c.id===bk.carId);
-    return `<div class="bk-card">
-      <div style="flex:1">
-        <div style="font-size:14px;font-weight:600">${car?.name||'—'}
-          <span style="font-family:var(--mono);font-size:10px;color:var(--mut)">${car?.plate||''}</span>
-        </div>
-        <div style="font-size:12px;color:var(--mut)">${bk.team} · ${bk.headcount} คน</div>
-        <div style="font-size:13px;margin-top:4px">${bk.mission}</div>
-        <div style="font-family:var(--mono);font-size:11px;color:var(--mut);margin-top:2px">${fdate(bk.start)} → ${fdate(bk.end)}</div>
-      </div>
-      <div style="text-align:right;flex-shrink:0">
-        <span class="pill ${pm[bk.status]}">${tm[bk.status]}</span>
-        ${bk.status==='active' ? `
-          <button class="bk-act" style="color:var(--ok)" onclick="updateBkStatus('${bk.id}','done')">✓ คืนรถ</button>
-          <button class="bk-act" style="color:var(--dn)" onclick="updateBkStatus('${bk.id}','cancelled')">ยกเลิก</button>` : ''}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-async function updateBkStatus(id, status) {
-  const r = await apiPost({ action:'updateBooking', data:{id,status} });
-  if (r?.ok) await loadAll();
-}
-
-// ══ ADMIN ══
-function switchAdmin(name) {
-  document.querySelectorAll('.apanel').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.atab').forEach(b=>b.classList.remove('on'));
-  document.getElementById('apanel-'+name).classList.add('on');
-  const idx = ['cars','members','mile-edit','ep-edit','settings'].indexOf(name);
-  document.querySelectorAll('.atab')[idx].classList.add('on');
-}
-
-// ── Admin: Cars ──
-function renderAdminCars() {
+/* ═══════════════════════════════════════════════
+   ADMIN — CARS
+   ═══════════════════════════════════════════════ */
+function renderAdminCars(){
   const el = document.getElementById('admin-car-list');
   if (!el) return;
-  if (!db.cars.length) { el.innerHTML='<div class="empty">ยังไม่มีรถในระบบ</div>'; return; }
-  el.innerHTML = db.cars.map(car => `<div class="aitem">
-    ${car.imageUrl
-      ? `<img class="aitem-thumb" src="${car.imageUrl}" onerror="this.style.display='none'">`
-      : `<div class="aitem-thumb-ph">🚗</div>`}
-    <div class="aitem-info">
-      <div class="aitem-name">${car.name}</div>
-      <div class="aitem-sub">${car.plate} · ${car.brand||''} ${car.model||''} · ${km(car.miles)} กม.</div>
+  if (!db.cars.length) { el.innerHTML = '<div class="empty"><div class="ic">🚗</div>ยังไม่มีรถในระบบ</div>'; return; }
+  el.innerHTML = `<div class="lst">` + db.cars.map(car => `<div class="li">
+    ${carImg(car,'thumb','thumb-ph')}
+    <div class="li-m"><div class="li-t">${esc(car.name)}</div>
+      <div class="li-s">${esc(car.plate)} · ${esc([car.brand,car.model].filter(Boolean).join(' ')||'—')} · ${km(car.miles)} กม.</div></div>
+    <div class="li-act">
+      <button class="ib" onclick="openEditCar('${esc(car.id)}')">✏️</button>
+      <button class="ib del" onclick="openDeleteCar('${esc(car.id)}')">🗑️</button>
     </div>
-    <div class="aitem-actions">
-      <button class="icon-btn" onclick="openEditCar('${car.id}')">✏️</button>
-      <button class="icon-btn del" onclick="openDeleteCar('${car.id}')">🗑️</button>
-    </div>
-  </div>`).join('');
+  </div>`).join('') + `</div>`;
 }
 
-function openCarModal() {
+function openCarModal(){
   document.getElementById('modal-car-title').textContent = 'เพิ่มรถ';
   document.getElementById('car-edit-id').value = '';
-  ['car-name','car-plate','car-brand','car-model','car-svc-date','car-img-url','car-img-search','car-next-svc-miles'].forEach(id=>{ const el=document.getElementById(id); if(el)el.value=''; });
-  document.getElementById('car-miles').value = '';
+  ['car-name','car-plate','car-brand','car-model','car-svc-date','car-img-url','car-next-svc-miles','car-miles']
+    .forEach(id => document.getElementById(id).value = '');
   document.getElementById('car-interval').value = 5000;
-  document.getElementById('search-results').innerHTML = '';
-  document.getElementById('car-img-preview').className = 'img-preview';
+  document.getElementById('car-img-preview').classList.remove('show');
   openModal('modal-car');
 }
 
-function openEditCar(id) {
-  const car = db.cars.find(c=>c.id===id) || {};
+function openEditCar(id){
+  const car = db.cars.find(c => c.id === id) || {};
   document.getElementById('modal-car-title').textContent = 'แก้ไขรถ';
-  document.getElementById('car-edit-id').value    = id;
-  document.getElementById('car-name').value       = car.name||'';
-  document.getElementById('car-plate').value      = car.plate||'';
-  document.getElementById('car-brand').value      = car.brand||'';
-  document.getElementById('car-model').value      = car.model||'';
-  document.getElementById('car-miles').value      = car.miles||'';
-  document.getElementById('car-interval').value   = car.svcInterval||5000;
+  document.getElementById('car-edit-id').value        = id;
+  document.getElementById('car-name').value           = car.name || '';
+  document.getElementById('car-plate').value          = car.plate || '';
+  document.getElementById('car-brand').value          = car.brand || '';
+  document.getElementById('car-model').value          = car.model || '';
+  document.getElementById('car-miles').value          = car.miles || '';
+  document.getElementById('car-interval').value       = car.svcInterval || 5000;
   document.getElementById('car-next-svc-miles').value = car.nextSvc ? String(car.nextSvc) : '';
-  document.getElementById('car-svc-date').value   = car.nextSvcDate ? String(car.nextSvcDate).slice(0,10) : '';
-  document.getElementById('car-img-url').value    = car.imageUrl||'';
-  document.getElementById('search-results').innerHTML = '';
-  const prev = document.getElementById('car-img-preview');
-  if (car.imageUrl) { prev.src=car.imageUrl; prev.className='img-preview show'; }
-  else { prev.className='img-preview'; }
+  document.getElementById('car-svc-date').value       = d10(car.nextSvcDate);
+  document.getElementById('car-img-url').value        = car.imageUrl || '';
+  previewImg();
   openModal('modal-car');
 }
 
-function openDeleteCar(id) {
-  const car = db.cars.find(c=>c.id===id);
+function openDeleteCar(id){
+  const car = db.cars.find(c => c.id === id);
   document.getElementById('car-del-id').value = id;
-  document.getElementById('car-del-name').textContent = car?.name||id;
+  document.getElementById('car-del-name').textContent = car?.name || id;
   openModal('modal-car-del');
 }
 
-async function submitCar() {
+async function submitCar(){
   const editId = document.getElementById('car-edit-id').value;
   const d = {
     name:        document.getElementById('car-name').value.trim(),
     plate:       document.getElementById('car-plate').value.trim(),
     brand:       document.getElementById('car-brand').value.trim(),
     model:       document.getElementById('car-model').value.trim(),
-    miles:       parseInt(document.getElementById('car-miles').value)||0,
-    svcInterval: parseInt(document.getElementById('car-interval').value)||5000,
+    miles:       parseInt(document.getElementById('car-miles').value) || 0,
+    svcInterval: parseInt(document.getElementById('car-interval').value) || 5000,
     imageUrl:    document.getElementById('car-img-url').value.trim(),
-    nextSvcDate: document.getElementById('car-svc-date').value||'',
-    nextSvcMilesOverride: parseInt(document.getElementById('car-next-svc-miles').value)||0,
+    nextSvcDate: document.getElementById('car-svc-date').value || '',
+    nextSvcMilesOverride: parseInt(document.getElementById('car-next-svc-miles').value) || 0,
   };
-  if (!d.name||!d.plate) { alert('ใส่ชื่อรถและทะเบียน'); return; }
-  // คำนวณ nextSvc: ถ้ากรอกไว้ใช้ตามนั้น ถ้าไม่กรอกคำนวณจาก miles + interval
+  if (!d.name || !d.plate) { toast('ใส่ชื่อรถและทะเบียน', 'err'); return; }
   d.nextSvc = d.nextSvcMilesOverride > d.miles ? d.nextSvcMilesOverride : d.miles + d.svcInterval;
+
   let r;
-  if (editId) {
-    d.id = editId;
-    d.lastSvcMiles = d.miles;
-    r = await apiPost({ action:'updateCar', data:d });
-  } else {
-    r = await apiPost({ action:'addCar', data:d });
-  }
+  if (editId) { d.id = editId; d.lastSvcMiles = d.miles; r = await apiPost({ action:'updateCar', data:d }); }
+  else        { r = await apiPost({ action:'addCar', data:d }); }
   if (r?.ok) {
     closeModal('modal-car');
     document.getElementById('car-edit-id').value = '';
+    toast(editId ? 'แก้ไขข้อมูลรถแล้ว' : 'เพิ่มรถแล้ว');
     await loadAll();
   }
 }
 
-async function confirmDeleteCar() {
+async function confirmDeleteCar(){
   const id = document.getElementById('car-del-id').value;
-  const r = await apiPost({ action:'deleteCar', data:{id} });
-  if (r?.ok) { closeModal('modal-car-del'); await loadAll(); }
+  const r = await apiPost({ action:'deleteCar', data:{ id } });
+  if (r?.ok) { closeModal('modal-car-del'); toast('ลบรถแล้ว'); await loadAll(); }
 }
 
-// ── Admin: Members ──
+function previewImg(){
+  const url  = document.getElementById('car-img-url').value.trim();
+  const prev = document.getElementById('car-img-preview');
+  if (url) { prev.src = url; prev.classList.add('show'); }
+  else prev.classList.remove('show');
+}
+
+/* ═══════════════════════════════════════════════
+   ADMIN — MEMBERS
+   ═══════════════════════════════════════════════ */
 const roleLabel = { member:'สมาชิก', driver:'คนขับ', admin:'Admin' };
 
-function renderAdminMembers() {
+function renderAdminMembers(){
   const el = document.getElementById('admin-member-list');
   if (!el) return;
-  if (!db.members.length) { el.innerHTML='<div class="empty">ยังไม่มีสมาชิก</div>'; return; }
-  el.innerHTML = db.members.map(m => `<div class="aitem">
-    <div class="avatar">${initials(m.name)}</div>
-    <div class="aitem-info">
-      <div class="aitem-name">${m.name}</div>
-      <div class="aitem-sub">${m.team||'—'} · ${roleLabel[m.role]||m.role}</div>
+  if (!db.members.length) { el.innerHTML = '<div class="empty"><div class="ic">👥</div>ยังไม่มีสมาชิก</div>'; return; }
+  el.innerHTML = `<div class="lst">` + db.members.map(m => `<div class="li">
+    <div class="avatar">${esc(initials(m.name))}</div>
+    <div class="li-m"><div class="li-t">${esc(m.name)}</div>
+      <div class="li-s">${esc(m.team||'—')} · ${esc(roleLabel[m.role]||m.role)}</div></div>
+    <div class="li-act">
+      <button class="ib" onclick="openEditMember('${esc(m.id)}')">✏️</button>
+      <button class="ib del" onclick="openDeleteMember('${esc(m.id)}')">🗑️</button>
     </div>
-    <div class="aitem-actions">
-      <button class="icon-btn" onclick="openEditMember('${m.id}')">✏️</button>
-      <button class="icon-btn del" onclick="openDeleteMember('${m.id}')">🗑️</button>
-    </div>
-  </div>`).join('');
+  </div>`).join('') + `</div>`;
 }
 
-function openMemberModal() {
+function openMemberModal(){
   document.getElementById('modal-member-title').textContent = 'เพิ่มสมาชิก';
   document.getElementById('mem-edit-id').value = '';
-  ['mem-name','mem-team'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('mem-name').value = '';
+  document.getElementById('mem-team').value = '';
   document.getElementById('mem-role').value = 'member';
   openModal('modal-member');
 }
-
-function openEditMember(id) {
-  const m = db.members.find(x=>x.id===id)||{};
+function openEditMember(id){
+  const m = db.members.find(x => x.id === id) || {};
   document.getElementById('modal-member-title').textContent = 'แก้ไขสมาชิก';
   document.getElementById('mem-edit-id').value = id;
-  document.getElementById('mem-name').value    = m.name||'';
-  document.getElementById('mem-team').value    = m.team||'';
-  document.getElementById('mem-role').value    = m.role||'member';
+  document.getElementById('mem-name').value = m.name || '';
+  document.getElementById('mem-team').value = m.team || '';
+  document.getElementById('mem-role').value = m.role || 'member';
   openModal('modal-member');
 }
-
-function openDeleteMember(id) {
-  const m = db.members.find(x=>x.id===id);
+function openDeleteMember(id){
+  const m = db.members.find(x => x.id === id);
   document.getElementById('mem-del-id').value = id;
-  document.getElementById('mem-del-name').textContent = m?.name||id;
+  document.getElementById('mem-del-name').textContent = m?.name || id;
   openModal('modal-member-del');
 }
-
-async function submitMember() {
+async function submitMember(){
   const editId = document.getElementById('mem-edit-id').value;
   const d = {
     name: document.getElementById('mem-name').value.trim(),
     team: document.getElementById('mem-team').value.trim(),
     role: document.getElementById('mem-role').value,
   };
-  if (!d.name) { alert('ใส่ชื่อสมาชิก'); return; }
+  if (!d.name) { toast('ใส่ชื่อสมาชิก', 'err'); return; }
   let r;
-  if (editId) { d.id=editId; r=await apiPost({action:'updateMember',data:d}); }
-  else        { r=await apiPost({action:'addMember',data:d}); }
-  if (r?.ok) { closeModal('modal-member'); document.getElementById('mem-edit-id').value=''; await loadAll(); }
+  if (editId) { d.id = editId; r = await apiPost({ action:'updateMember', data:d }); }
+  else        { r = await apiPost({ action:'addMember', data:d }); }
+  if (r?.ok) { closeModal('modal-member'); toast(editId?'แก้ไขแล้ว':'เพิ่มสมาชิกแล้ว'); await loadAll(); }
 }
-
-async function confirmDeleteMember() {
+async function confirmDeleteMember(){
   const id = document.getElementById('mem-del-id').value;
-  const r = await apiPost({ action:'deleteMember', data:{id} });
-  if (r?.ok) { closeModal('modal-member-del'); await loadAll(); }
+  const r = await apiPost({ action:'deleteMember', data:{ id } });
+  if (r?.ok) { closeModal('modal-member-del'); toast('ลบสมาชิกแล้ว'); await loadAll(); }
 }
 
-// ── Admin: Mile Edit ──
-function renderAdminMilePicks() {
+/* ═══════════════════════════════════════════════
+   ADMIN — MILE / EP EDIT
+   ═══════════════════════════════════════════════ */
+function renderAdminMilePicks(){
   const el = document.getElementById('admin-mile-picks');
   if (!el) return;
-  el.innerHTML = db.cars.map(car => `<button class="cpick${adminMileCar===car.id?' sel':''}" onclick="pickAdminMile('${car.id}')">
-    <div style="font-size:14px;font-weight:600;color:var(--txt)">${car.name}</div>
-    <div style="font-family:var(--mono);font-size:12px;color:var(--mut)">${km(car.miles)} กม.</div>
-  </button>`).join('');
+  el.innerHTML = db.cars.map(car => `<button class="pick${adminMileCar===car.id?' sel':''}" onclick="pickAdminMile('${esc(car.id)}')">
+    <span class="pick-n">${esc(car.name)}</span>
+    <span class="li-v">${km(car.miles)} กม.</span>
+  </button>`).join('') || '<div class="empty">ยังไม่มีรถ</div>';
 }
 
-function pickAdminMile(id) {
+function pickAdminMile(id){
   adminMileCar = id;
   renderAdminMilePicks();
-  const logs = db.miles.filter(l=>l.carId===id).slice().reverse().slice(0,15);
-  const el = document.getElementById('admin-mile-log');
-  el.innerHTML = `<div class="fcard" style="margin-top:12px">
-    <div class="slabel" style="margin-bottom:10px">รายการเลขไมล์</div>
-    ${logs.length ? logs.map(l=>`<div class="lrow">
-      <div><div class="lrow-name">${l.team}</div><div class="lrow-note">${l.note||'—'}</div></div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <div style="text-align:right"><div class="lrow-val">${km(l.miles)} กม.</div><div class="lrow-date">${fts(l.ts)}</div></div>
-        <button class="icon-btn" style="width:28px;height:28px;font-size:12px;flex-shrink:0"
-          onclick="openEditMile('${l.id}','${l.miles}','${(l.note||'').replace(/'/g,"\\'")}')">✏️</button>
-      </div>
-    </div>`).join('') : '<div class="empty">ยังไม่มีประวัติ</div>'}
-  </div>`;
+  const logs = db.miles.filter(l => l.carId===id).slice().reverse().slice(0,15);
+  document.getElementById('admin-mile-log').innerHTML = logs.length
+    ? `<div class="lst" style="margin-top:12px">` + logs.map(l => `<div class="li">
+        <div class="li-m"><div class="li-t">${esc(l.team)}</div><div class="li-s">${esc(l.note||'—')}</div></div>
+        <div class="li-r"><div class="li-v">${km(l.miles)} กม.</div><div class="li-d">${fts(l.ts)}</div></div>
+        <button class="ib ib-sm" onclick="openEditMile('${esc(l.id)}')">✏️</button>
+      </div>`).join('') + `</div>`
+    : '<div class="empty" style="margin-top:12px">ยังไม่มีประวัติ</div>';
 }
 
-function openEditMile(id, val, note) {
-  document.getElementById('mile-edit-id').value  = id;
-  document.getElementById('mile-edit-val').value = val;
-  document.getElementById('mile-edit-note').value = note;
+function openEditMile(id){
+  const l = db.miles.find(x => x.id === id) || {};
+  document.getElementById('mile-edit-id').value   = id;
+  document.getElementById('mile-edit-val').value  = l.miles || '';
+  document.getElementById('mile-edit-note').value = l.note || '';
   openModal('modal-mile-edit');
 }
-
-async function submitEditMile() {
+async function submitEditMile(){
   const id    = document.getElementById('mile-edit-id').value;
   const miles = parseInt(document.getElementById('mile-edit-val').value);
   const note  = document.getElementById('mile-edit-note').value.trim();
-  const r = await apiPost({ action:'editMile', data:{id,miles,note} });
-  if (r?.ok) { closeModal('modal-mile-edit'); await loadAll(); if(adminMileCar) pickAdminMile(adminMileCar); }
+  const r = await apiPost({ action:'editMile', data:{ id, miles, note } });
+  if (r?.ok) { closeModal('modal-mile-edit'); toast('แก้ไขแล้ว'); await loadAll(); if (adminMileCar) pickAdminMile(adminMileCar); }
 }
 
-// ── Admin: EP Edit ──
-function renderAdminEpPicks() {
+function renderAdminEpPicks(){
   const el = document.getElementById('admin-ep-picks');
   if (!el) return;
-  el.innerHTML = db.cars.map(car => `<button class="cpick${adminEpCar===car.id?' sel':''}" onclick="pickAdminEp('${car.id}')">
-    <div style="font-size:14px;font-weight:600;color:var(--txt)">${car.name}</div>
-    <div style="font-family:var(--mono);font-size:12px;color:var(--ep)">${thb(epBal(car.id))}</div>
-  </button>`).join('');
+  el.innerHTML = db.cars.map(car => `<button class="pick${adminEpCar===car.id?' sel':''}" onclick="pickAdminEp('${esc(car.id)}')">
+    <span class="pick-n">${esc(car.name)}</span>
+    <span class="li-v" style="color:var(--violet)">${thb(epBal(car.id))}</span>
+  </button>`).join('') || '<div class="empty">ยังไม่มีรถ</div>';
 }
 
-function pickAdminEp(id) {
+function pickAdminEp(id){
   adminEpCar = id;
   renderAdminEpPicks();
-  const logs = db.easypass.filter(l=>l.carId===id).slice().reverse().slice(0,15);
-  const el = document.getElementById('admin-ep-log');
-  el.innerHTML = `<div class="fcard" style="margin-top:12px">
-    <div class="slabel" style="margin-bottom:10px">รายการ Easy Pass</div>
-    ${logs.length ? logs.map(l=>`<div class="ep-row">
-      <div>
-        <div style="font-size:13px;font-weight:500">${l.type==='topup'?'เติมเงิน':'ใช้ทางด่วน'}</div>
-        <div style="font-size:12px;color:var(--mut)">${l.note||'—'} · ${fts(l.ts)}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span class="${l.type==='topup'?'ep-plus':'ep-minus'}">${l.type==='topup'?'+':'-'}${thb(l.amount)}</span>
-        <button class="icon-btn" style="width:28px;height:28px;font-size:12px;flex-shrink:0"
-          onclick="openEditEp('${l.id}','${l.amount}','${(l.note||'').replace(/'/g,"\\'")}')">✏️</button>
-      </div>
-    </div>`).join('') : '<div class="empty">ยังไม่มีประวัติ</div>'}
-  </div>`;
+  const logs = db.easypass.filter(l => l.carId===id).slice().reverse().slice(0,15);
+  document.getElementById('admin-ep-log').innerHTML = logs.length
+    ? `<div class="lst" style="margin-top:12px">` + logs.map(l => `<div class="li">
+        <div class="li-m"><div class="li-t" style="font-size:13.5px">${l.type==='topup'?'เติมเงิน':'ใช้ทางด่วน'}</div>
+          <div class="li-s">${esc(l.note||'—')} · ${fts(l.ts)}</div></div>
+        <span class="${l.type==='topup'?'plus':'minus'}">${l.type==='topup'?'+':'−'}${thb(l.amount)}</span>
+        <button class="ib ib-sm" onclick="openEditEp('${esc(l.id)}')">✏️</button>
+      </div>`).join('') + `</div>`
+    : '<div class="empty" style="margin-top:12px">ยังไม่มีประวัติ</div>';
 }
 
-function openEditEp(id, val, note) {
-  document.getElementById('ep-edit-id').value  = id;
-  document.getElementById('ep-edit-val').value = val;
-  document.getElementById('ep-edit-note').value = note;
+function openEditEp(id){
+  const l = db.easypass.find(x => x.id === id) || {};
+  document.getElementById('ep-edit-id').value   = id;
+  document.getElementById('ep-edit-val').value  = l.amount || '';
+  document.getElementById('ep-edit-note').value = l.note || '';
   openModal('modal-ep-edit');
 }
-
-async function submitEditEp() {
+async function submitEditEp(){
   const id     = document.getElementById('ep-edit-id').value;
   const amount = parseInt(document.getElementById('ep-edit-val').value);
   const note   = document.getElementById('ep-edit-note').value.trim();
-  const r = await apiPost({ action:'editEasyPass', data:{id,amount,note} });
-  if (r?.ok) { closeModal('modal-ep-edit'); await loadAll(); if(adminEpCar) pickAdminEp(adminEpCar); }
+  const r = await apiPost({ action:'editEasyPass', data:{ id, amount, note } });
+  if (r?.ok) { closeModal('modal-ep-edit'); toast('แก้ไขแล้ว'); await loadAll(); if (adminEpCar) pickAdminEp(adminEpCar); }
 }
 
-// ══ IMAGE SEARCH ══
-async function searchCarImages() {
-  const q = document.getElementById('car-img-search').value.trim();
-  if (!q) return;
-  const el = document.getElementById('search-results');
-  el.innerHTML = '<span style="font-size:12px;color:var(--mut)">กำลังค้นหา...</span>';
-  const kw = encodeURIComponent(q + ' car');
-  const imgs = [1,2,3,4].map(n => `https://source.unsplash.com/160x100/?${kw}&sig=${n}`);
-  el.innerHTML = imgs.map((url,i) => `<img class="sr-img" src="${url}" alt="option ${i+1}"
-    onclick="selectCarImg('${url}')" onerror="this.style.display='none'">`).join('');
+/* ═══════════════════════════════════════════════
+   SETTINGS
+   ═══════════════════════════════════════════════ */
+function saveApiUrl(){
+  const val = document.getElementById('api-url-input').value.trim();
+  if (!val) { toast('ใส่ URL ก่อน', 'err'); return; }
+  API_URL = val;
+  try { localStorage.setItem(CFG_KEY, val); } catch(e){}
+  toast('บันทึก URL แล้ว — กำลังโหลดข้อมูล…');
+  renderAlerts();
+  loadAll();
+}
+function resetApiUrl(){
+  API_URL = DEFAULT_API_URL;
+  try { localStorage.removeItem(CFG_KEY); } catch(e){}
+  document.getElementById('api-url-input').value = API_URL;
+  toast('กลับไปใช้ URL เริ่มต้นแล้ว');
+  renderAlerts();
+  loadAll();
 }
 
-function selectCarImg(url) {
-  document.getElementById('car-img-url').value = url;
-  document.querySelectorAll('.sr-img').forEach(i=>i.classList.remove('sel'));
-  event.target.classList.add('sel');
-  const prev = document.getElementById('car-img-preview');
-  prev.src = url; prev.className = 'img-preview show';
-}
-
-function previewImg() {
-  const url  = document.getElementById('car-img-url').value.trim();
-  const prev = document.getElementById('car-img-preview');
-  if (url) { prev.src=url; prev.className='img-preview show'; }
-  else { prev.className='img-preview'; }
-}
-
-// ══ MODAL HELPERS ══
-function openModal(id) { document.getElementById(id).classList.add('show'); }
-function closeModal(id) { document.getElementById(id).classList.remove('show'); }
-
-// ══ NAV ══
-function go(name) {
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
-  document.getElementById('page-'+name).classList.add('on');
-  document.querySelectorAll('.tab')[{status:0,book:1,mile:2,ep:3,bookings:4,history:5,timeline:6,admin:7}[name]].classList.add('on');
-  if (name==='book') renderPicks();
-  if (name==='history') initHistory();
-  if (name==='timeline') renderTimeline();
-}
-
-// ══ TOAST ══
-function showToast(id, msg, isOk) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.textContent    = msg;
-  el.style.background  = isOk ? 'var(--okb)' : 'var(--wnb)';
-  el.style.borderColor = isOk ? 'var(--okbd)' : 'var(--wnbd)';
-  el.style.color       = isOk ? 'var(--ok)'  : 'var(--wn)';
-  el.className = 'toast show';
-  setTimeout(() => el.className = 'toast', 3500);
-}
-
-// ══ HISTORY ══
-function initHistory() {
-  // ตั้งค่า default วันที่ = เดือนนี้
+/* ═══════════════════════════════════════════════
+   HISTORY
+   ═══════════════════════════════════════════════ */
+function initHistory(){
   const now = new Date();
-  const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0,10);
-  const lastDay  = new Date(now.getFullYear(), now.getMonth()+1, 0).toISOString().slice(0,10);
-  if (!document.getElementById('hist-from').value) document.getElementById('hist-from').value = firstDay;
-  if (!document.getElementById('hist-to').value)   document.getElementById('hist-to').value   = lastDay;
+  const f = document.getElementById('hist-from'), t = document.getElementById('hist-to');
+  if (!f.value) f.value = d10(new Date(now.getFullYear(), now.getMonth(), 1));
+  if (!t.value) t.value = d10(new Date(now.getFullYear(), now.getMonth()+1, 0));
 
-  // populate car dropdown
   const carSel = document.getElementById('hist-car');
+  const curCar = carSel.value;
   carSel.innerHTML = '<option value="">ทั้งหมด</option>' +
-    db.cars.map(c=>`<option value="${c.id}">${c.name} (${c.plate})</option>`).join('');
+    db.cars.map(c => `<option value="${esc(c.id)}">${esc(c.name)} (${esc(c.plate)})</option>`).join('');
+  carSel.value = curCar;
 
-  // populate team dropdown
   const teams = [...new Set([
-    ...db.bookings.map(b=>b.team),
-    ...db.miles.map(m=>m.team),
-    ...db.easypass.map(e=>e.note||''),
-    ...db.members.map(m=>m.team),
+    ...db.bookings.map(b=>b.team), ...db.miles.map(m=>m.team), ...db.members.map(m=>m.team),
   ].filter(Boolean))].sort();
   const teamSel = document.getElementById('hist-team');
+  const curTeam = teamSel.value;
   teamSel.innerHTML = '<option value="">ทั้งหมด</option>' +
-    teams.map(t=>`<option value="${t}">${t}</option>`).join('');
+    teams.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join('');
+  teamSel.value = curTeam;
 
   renderHistory();
 }
 
-function getHistoryRows() {
-  const from = document.getElementById('hist-from').value;
-  const to   = document.getElementById('hist-to').value;
+function getHistoryRows(){
+  const from  = document.getElementById('hist-from').value;
+  const to    = document.getElementById('hist-to').value;
   const carF  = document.getElementById('hist-car').value;
   const teamF = document.getElementById('hist-team').value;
   const typeF = document.getElementById('hist-type').value;
-
   const toEnd = to ? to + 'T23:59:59' : null;
+  const inRange = ts => !((from && ts < from) || (toEnd && ts > toEnd));
 
-  let rows = [];
+  const rows = [];
 
-  // การจอง
-  if (!typeF || typeF==='booking') {
+  if (!typeF || typeF === 'booking') {
     db.bookings.forEach(b => {
-      const car = db.cars.find(c=>c.id===b.carId);
-      const ts  = b.ts || b.start;
-      if (from && ts < from) return;
-      if (toEnd && ts > toEnd) return;
+      const ts = b.ts || d10(b.start);
+      if (!inRange(ts)) return;
       if (carF && b.carId !== carF) return;
       if (teamF && b.team !== teamF) return;
-      rows.push({
-        ts, type:'booking',
-        typeTh:'การจอง',
-        car: car?.name||'—',
-        plate: car?.plate||'—',
-        team: b.team,
-        detail: `${b.mission} · ${fdate(b.start)} → ${fdate(b.end)} · ${b.headcount} คน`,
-        value: '', unit:'',
-        status: b.status==='active'?'กำลังใช้':b.status==='done'?'เสร็จแล้ว':'ยกเลิก',
-      });
+      const car = db.cars.find(c => c.id === b.carId);
+      rows.push({ ts, type:'booking', typeTh:'การจอง',
+        car:car?.name||'—', plate:car?.plate||'—', team:b.team,
+        detail:`${b.mission} · ${fdate(b.start)} → ${fdate(b.end)} · ${b.headcount} คน`,
+        value:'', status: b.status==='active'?'กำลังใช้':b.status==='done'?'เสร็จแล้ว':'ยกเลิก' });
     });
   }
 
-  // เลขไมล์
-  if (!typeF || typeF==='mile') {
+  if (!typeF || typeF === 'mile') {
     db.miles.forEach(m => {
-      const car = db.cars.find(c=>c.id===m.carId);
-      const ts  = m.ts;
-      if (from && ts < from) return;
-      if (toEnd && ts > toEnd) return;
+      if (!inRange(m.ts)) return;
       if (carF && m.carId !== carF) return;
       if (teamF && m.team !== teamF) return;
-      rows.push({
-        ts, type:'mile',
-        typeTh:'เลขไมล์',
-        car: car?.name||'—',
-        plate: car?.plate||'—',
-        team: m.team,
-        detail: m.note||'—',
-        value: km(m.miles), unit:'กม.',
-        status:'',
-      });
+      const car = db.cars.find(c => c.id === m.carId);
+      rows.push({ ts:m.ts, type:'mile', typeTh:'เลขไมล์',
+        car:car?.name||'—', plate:car?.plate||'—', team:m.team,
+        detail:m.note||'—', value:`${km(m.miles)} กม.`, status:'' });
     });
   }
 
-  // Easy Pass
-  if (!typeF || typeF==='easypass') {
+  if ((!typeF || typeF === 'easypass') && !teamF) {
     db.easypass.forEach(e => {
-      const car = db.cars.find(c=>c.id===e.carId);
-      const ts  = e.ts;
-      if (from && ts < from) return;
-      if (toEnd && ts > toEnd) return;
+      if (!inRange(e.ts)) return;
       if (carF && e.carId !== carF) return;
-      if (teamF) return; // easypass ไม่มี team field ข้ามไป
-      rows.push({
-        ts, type:'easypass',
-        typeTh: e.type==='topup'?'Easy Pass เติม':'Easy Pass ใช้',
-        car: car?.name||'—',
-        plate: car?.plate||'—',
-        team: '—',
-        detail: e.note||'—',
-        value: thb(e.amount), unit: e.type==='topup'?'เติม':'ใช้',
-        status:'',
-      });
+      const car = db.cars.find(c => c.id === e.carId);
+      rows.push({ ts:e.ts, type:'easypass',
+        typeTh: e.type==='topup' ? 'EP เติม' : 'EP ใช้',
+        car:car?.name||'—', plate:car?.plate||'—', team:'—',
+        detail:e.note||'—', value:(e.type==='topup'?'+':'−')+thb(e.amount), status:'' });
     });
   }
 
-  return rows.sort((a,b) => new Date(b.ts)-new Date(a.ts));
+  return rows.sort((a,b) => new Date(b.ts) - new Date(a.ts));
 }
 
-function renderHistory() {
+function renderHistory(){
   const rows = getHistoryRows();
+  const from = document.getElementById('hist-from').value;
+  const to   = document.getElementById('hist-to').value;
+  const carF = document.getElementById('hist-car').value;
 
-  // summary
-  const bookCount = rows.filter(r=>r.type==='booking').length;
-  const mileCount = rows.filter(r=>r.type==='mile').length;
-  const epTotal   = db.easypass
-    .filter(e => {
-      const from=document.getElementById('hist-from').value;
-      const to=document.getElementById('hist-to').value;
-      const carF=document.getElementById('hist-car').value;
-      if (from&&e.ts<from) return false;
-      if (to&&e.ts>to+'T23:59:59') return false;
-      if (carF&&e.carId!==carF) return false;
-      return true;
-    })
-    .reduce((s,e)=>s+(e.type==='topup'?+e.amount:-+e.amount),0);
+  const epTotal = db.easypass.filter(e => {
+    if (from && e.ts < from) return false;
+    if (to && e.ts > to + 'T23:59:59') return false;
+    if (carF && e.carId !== carF) return false;
+    return true;
+  }).reduce((s,e) => s + (e.type==='topup' ? +e.amount : -+e.amount), 0);
 
   document.getElementById('hist-summary').innerHTML = `
-    <div style="background:var(--okb);border-radius:8px;padding:12px;text-align:center">
-      <div style="font-size:20px;font-weight:600;color:var(--ok)">${bookCount}</div>
-      <div style="font-size:11px;color:var(--ok)">รายการจอง</div>
-    </div>
-    <div style="background:var(--byb);border-radius:8px;padding:12px;text-align:center">
-      <div style="font-size:20px;font-weight:600;color:var(--by)">${mileCount}</div>
-      <div style="font-size:11px;color:var(--by)">บันทึกเลขไมล์</div>
-    </div>
-    <div style="background:var(--epb);border-radius:8px;padding:12px;text-align:center">
-      <div style="font-size:20px;font-weight:600;color:var(--ep)">${thb(epTotal)}</div>
-      <div style="font-size:11px;color:var(--ep)">ยอด Easy Pass</div>
-    </div>`;
+    <div class="st" style="background:var(--info-bg);border-color:var(--info-bd)">
+      <div class="st-v" style="color:var(--info)">${rows.filter(r=>r.type==='booking').length}</div>
+      <div class="st-l" style="color:var(--info)">รายการจอง</div></div>
+    <div class="st" style="background:var(--ok-bg);border-color:var(--ok-bd)">
+      <div class="st-v" style="color:var(--ok)">${rows.filter(r=>r.type==='mile').length}</div>
+      <div class="st-l" style="color:var(--ok)">บันทึกเลขไมล์</div></div>
+    <div class="st" style="background:var(--violet-bg);border-color:var(--violet-bd)">
+      <div class="st-v" style="color:var(--violet)">${thb(epTotal)}</div>
+      <div class="st-l" style="color:var(--violet)">ยอด EP สุทธิ</div></div>`;
 
-  // table
   const el = document.getElementById('hist-table');
-  if (!rows.length) { el.innerHTML='<div class="empty">ไม่พบข้อมูลในช่วงที่เลือก</div>'; return; }
+  if (!rows.length) { el.innerHTML = '<div class="empty"><div class="ic">🔍</div>ไม่พบข้อมูลในช่วงที่เลือก</div>'; return; }
 
-  const typeColor = { booking:'var(--by)', mile:'var(--ok)', easypass:'var(--ep)' };
-  el.innerHTML = `<div style="background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;">` +
-    rows.map((r,i) => `
-    <div style="display:flex;align-items:flex-start;gap:10px;padding:11px 14px;${i>0?'border-top:1px solid var(--bdr)':''}">
-      <div style="flex-shrink:0;margin-top:2px">
-        <span style="font-size:10px;font-family:var(--mono);font-weight:600;padding:2px 7px;border-radius:4px;background:${typeColor[r.type]}22;color:${typeColor[r.type]}">${r.typeTh}</span>
-      </div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:13px;font-weight:500">${r.car} <span style="font-family:var(--mono);font-size:10px;color:var(--mut)">${r.plate}</span></div>
-        <div style="font-size:12px;color:var(--mut);margin-top:2px">${r.team} · ${r.detail}</div>
-        ${r.status?`<span style="font-size:10px;font-family:var(--mono);color:var(--mut)">${r.status}</span>`:''}
-      </div>
-      <div style="text-align:right;flex-shrink:0">
-        ${r.value?`<div style="font-family:var(--mono);font-size:13px;font-weight:500">${r.value}</div>`:''}
-        <div style="font-size:11px;color:var(--mut);font-family:var(--mono)">${fts(r.ts)}</div>
-      </div>
-    </div>`).join('') + '</div>';
+  const tagStyle = {
+    booking:'background:var(--info-bg);color:var(--info);border-color:var(--info-bd)',
+    mile:'background:var(--ok-bg);color:var(--ok);border-color:var(--ok-bd)',
+    easypass:'background:var(--violet-bg);color:var(--violet);border-color:var(--violet-bd)',
+  };
+
+  el.innerHTML = `<div class="lst">` + rows.map(r => `<div class="hr">
+    <span class="tag" style="${tagStyle[r.type]}">${esc(r.typeTh)}</span>
+    <div class="li-m">
+      <div class="li-t" style="font-size:13.5px">${esc(r.car)} <span class="num" style="font-size:10.5px;color:var(--text-3)">${esc(r.plate)}</span></div>
+      <div class="li-s">${esc(r.team)} · ${esc(r.detail)}</div>
+      ${r.status ? `<div class="li-d">${esc(r.status)}</div>` : ''}
+    </div>
+    <div class="li-r">
+      ${r.value ? `<div class="li-v">${esc(r.value)}</div>` : ''}
+      <div class="li-d">${fts(r.ts)}</div>
+    </div>
+  </div>`).join('') + `</div>`;
 }
 
-// ══ EXPORT CSV ══
-function exportCSV() {
+function exportCSV(){
   const rows = getHistoryRows();
-  if (!rows.length) { alert('ไม่มีข้อมูลในช่วงที่เลือก'); return; }
-  const headers = ['วันที่','ประเภท','รถ','ทะเบียน','ทีม','รายละเอียด','ค่า','สถานะ'];
+  if (!rows.length) { toast('ไม่มีข้อมูลในช่วงที่เลือก', 'err'); return; }
+  const q = v => '"' + String(v==null?'':v).replace(/"/g,'""') + '"';
   const lines = [
-    headers.join(','),
-    ...rows.map(r => [
-      fts(r.ts), r.typeTh, r.car, r.plate, r.team,
-      '"'+r.detail.replace(/"/g,'""')+'"',
-      r.value, r.status
-    ].join(','))
+    ['วันที่','ประเภท','รถ','ทะเบียน','ทีม','รายละเอียด','ค่า','สถานะ'].map(q).join(','),
+    ...rows.map(r => [fts(r.ts), r.typeTh, r.car, r.plate, r.team, r.detail, r.value, r.status].map(q).join(','))
   ];
-  const blob = new Blob(['\uFEFF'+lines.join('\n')], { type:'text/csv;charset=utf-8' });
+  const blob = new Blob(['﻿' + lines.join('\r\n')], { type:'text/csv;charset=utf-8' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   const from = document.getElementById('hist-from').value || 'all';
   const to   = document.getElementById('hist-to').value   || 'all';
   a.download = `fleet-history-${from}-${to}.csv`;
   a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+  toast('ดาวน์โหลด CSV แล้ว');
 }
 
-// ══ EXPORT PDF ══
-function exportPDF() {
+function exportPDF(){
   const rows = getHistoryRows();
-  if (!rows.length) { alert('ไม่มีข้อมูลในช่วงที่เลือก'); return; }
+  if (!rows.length) { toast('ไม่มีข้อมูลในช่วงที่เลือก', 'err'); return; }
   const from = document.getElementById('hist-from').value;
   const to   = document.getElementById('hist-to').value;
-  const typeColor = { booking:'#1a4a8a', mile:'#1a7a4a', easypass:'#5b21b6' };
+  const tc = { booking:'#1a4b8f', mile:'#0f7047', easypass:'#5a25b0' };
 
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+  const html = `<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><title>ประวัติการใช้งานรถ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
   <style>
-    body{font-family:sans-serif;font-size:12px;color:#1a1916;padding:20px;}
-    h1{font-size:16px;margin-bottom:4px;}
-    .sub{font-size:11px;color:#888;margin-bottom:16px;}
-    .summary{display:flex;gap:12px;margin-bottom:16px;}
-    .scard{padding:8px 14px;border-radius:6px;text-align:center;flex:1;}
-    table{width:100%;border-collapse:collapse;font-size:11px;}
-    th{background:#f0efe9;padding:6px 8px;text-align:left;border-bottom:1px solid #e0dfd8;}
-    td{padding:6px 8px;border-bottom:1px solid #f0efe9;}
-    .pill{font-size:10px;padding:2px 6px;border-radius:3px;font-weight:600;}
-    @media print{body{padding:0}button{display:none}}
+    *{box-sizing:border-box}
+    body{font-family:'Sarabun',sans-serif;font-size:12px;color:#1b1a17;padding:28px;line-height:1.6;margin:0}
+    h1{font-size:17px;margin:0 0 3px}
+    .sub{font-size:11px;color:#8a8680;margin-bottom:18px}
+    .sm{display:flex;gap:10px;margin-bottom:18px}
+    .sc{padding:9px 14px;border-radius:7px;text-align:center;flex:1;border:1px solid}
+    .sc b{display:block;font-size:18px;font-family:'IBM Plex Mono',monospace}
+    table{width:100%;border-collapse:collapse;font-size:11px}
+    th{background:#f1f0ea;padding:7px 8px;text-align:left;border-bottom:1.5px solid #d2cfc4;font-weight:600}
+    td{padding:7px 8px;border-bottom:1px solid #eceae3;vertical-align:top}
+    tr:nth-child(even) td{background:#faf9f6}
+    .tag{font-size:9.5px;padding:2px 6px;border-radius:4px;font-weight:600;white-space:nowrap}
+    .mono{font-family:'IBM Plex Mono',monospace;white-space:nowrap}
+    .pb{margin-bottom:16px;padding:8px 16px;cursor:pointer;border:1px solid #d2cfc4;border-radius:7px;background:#fff;font-family:inherit;font-size:13px}
+    @media print{body{padding:0}.pb{display:none}tr{break-inside:avoid}}
   </style></head><body>
-  <button onclick="window.print()" style="margin-bottom:12px;padding:6px 14px;cursor:pointer">🖨 พิมพ์ / บันทึก PDF</button>
+  <button class="pb" onclick="window.print()">🖨 พิมพ์ / บันทึกเป็น PDF</button>
   <h1>ประวัติการใช้งานรถ</h1>
-  <div class="sub">ช่วงวันที่: ${fdate(from)} — ${fdate(to)} · ออกรายงาน ${fts(new Date().toISOString())}</div>
-  <div class="summary">
-    <div class="scard" style="background:#e8f5ee;color:#1a7a4a">
-      <div style="font-size:18px;font-weight:600">${rows.filter(r=>r.type==='booking').length}</div>
-      <div>รายการจอง</div>
-    </div>
-    <div class="scard" style="background:#e8f0fe;color:#1a4a8a">
-      <div style="font-size:18px;font-weight:600">${rows.filter(r=>r.type==='mile').length}</div>
-      <div>บันทึกเลขไมล์</div>
-    </div>
-    <div class="scard" style="background:#ede9fe;color:#5b21b6">
-      <div style="font-size:18px;font-weight:600">${rows.filter(r=>r.type==='easypass').length}</div>
-      <div>Easy Pass</div>
-    </div>
+  <div class="sub">ช่วงวันที่ ${fdate(from)} — ${fdate(to)} · ออกรายงาน ${fts(new Date())} · ${rows.length} รายการ</div>
+  <div class="sm">
+    <div class="sc" style="background:#e9f0fd;border-color:#a9c5f1;color:#1a4b8f"><b>${rows.filter(r=>r.type==='booking').length}</b>รายการจอง</div>
+    <div class="sc" style="background:#e6f4ed;border-color:#a6d7bf;color:#0f7047"><b>${rows.filter(r=>r.type==='mile').length}</b>บันทึกเลขไมล์</div>
+    <div class="sc" style="background:#eee9fd;border-color:#c5b4fb;color:#5a25b0"><b>${rows.filter(r=>r.type==='easypass').length}</b>Easy Pass</div>
   </div>
-  <table>
-    <thead><tr><th>วันที่</th><th>ประเภท</th><th>รถ</th><th>ทีม</th><th>รายละเอียด</th><th>ค่า</th><th>สถานะ</th></tr></thead>
-    <tbody>
-    ${rows.map(r=>`<tr>
-      <td style="font-family:monospace;white-space:nowrap">${fts(r.ts)}</td>
-      <td><span class="pill" style="background:${typeColor[r.type]}22;color:${typeColor[r.type]}">${r.typeTh}</span></td>
-      <td>${r.car}<br><span style="color:#888;font-size:10px">${r.plate}</span></td>
-      <td>${r.team}</td>
-      <td>${r.detail}</td>
-      <td style="font-family:monospace">${r.value}</td>
-      <td>${r.status}</td>
-    </tr>`).join('')}
-    </tbody>
-  </table>
-  </body></html>`;
+  <table><thead><tr>
+    <th>วันที่</th><th>ประเภท</th><th>รถ</th><th>ทีม</th><th>รายละเอียด</th><th>ค่า</th><th>สถานะ</th>
+  </tr></thead><tbody>
+  ${rows.map(r => `<tr>
+    <td class="mono">${fts(r.ts)}</td>
+    <td><span class="tag" style="background:${tc[r.type]}1a;color:${tc[r.type]}">${esc(r.typeTh)}</span></td>
+    <td>${esc(r.car)}<br><span style="color:#8a8680;font-size:10px">${esc(r.plate)}</span></td>
+    <td>${esc(r.team)}</td><td>${esc(r.detail)}</td>
+    <td class="mono">${esc(r.value)}</td><td>${esc(r.status)}</td>
+  </tr>`).join('')}
+  </tbody></table></body></html>`;
 
-  const w = window.open('','_blank');
+  const w = window.open('', '_blank');
+  if (!w) { toast('เบราว์เซอร์บล็อกป๊อปอัป — อนุญาตก่อน', 'err'); return; }
   w.document.write(html);
   w.document.close();
 }
 
+/* ═══════════════════════════════════════════════
+   CALENDAR / TIMELINE
+   ═══════════════════════════════════════════════ */
+let tlYear = new Date().getFullYear(), tlMonth = new Date().getMonth();
+const CAR_COLORS = ['#1a4b8f','#0f7047','#5a25b0','#9c5606','#b32a1e','#0d6b73'];
 
-document.querySelectorAll('.modal-bg').forEach(bg => {
-  bg.addEventListener('click', e => { if (e.target===bg) bg.classList.remove('show'); });
-});
-['b-start','b-end'].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) el.addEventListener('change', renderPicks);
-});
+function tlMove(dir){
+  tlMonth += dir;
+  if (tlMonth > 11) { tlMonth = 0; tlYear++; }
+  if (tlMonth < 0)  { tlMonth = 11; tlYear--; }
+  renderTimeline();
+}
+function tlToday(){ tlYear = new Date().getFullYear(); tlMonth = new Date().getMonth(); renderTimeline(); }
 
-// ══ CALENDAR TIMELINE ══
-let tlYear  = new Date().getFullYear();
-let tlMonth = new Date().getMonth();
+const bkOnDate = ds => db.bookings.filter(b =>
+  b.status !== 'cancelled' && ds >= d10(b.start) && ds <= d10(b.end));
 
-const TH_MONTHS_FULL = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+// สีตามคัน — งานที่เสร็จแล้วจะแสดงจางลง
+const bkColor = bk => CAR_COLORS[Math.max(0, db.cars.findIndex(c => c.id === bk.carId)) % CAR_COLORS.length];
+const bkFade  = bk => bk.status === 'done' ? '.45' : '1';
 
-function tlMove(dir){ tlMonth+=dir; if(tlMonth>11){tlMonth=0;tlYear++;} if(tlMonth<0){tlMonth=11;tlYear--;} renderTimeline(); }
-function tlToday(){ tlYear=new Date().getFullYear(); tlMonth=new Date().getMonth(); renderTimeline(); }
-
-function getBookingsOnDate(dateStr){
-  return db.bookings.filter(b=>{
-    if(b.status==='cancelled') return false;
-    const bs=String(b.start||'').slice(0,10);
-    const be=String(b.end||'').slice(0,10);
-    return dateStr>=bs && dateStr<=be;
-  });
+function renderLegend(){
+  const el = document.getElementById('tl-legend');
+  if (!el) return;
+  el.innerHTML = db.cars.map((c,i) =>
+    `<span class="lg"><i style="background:${CAR_COLORS[i % CAR_COLORS.length]}"></i>${esc(c.name)}</span>`
+  ).join('') + `<span class="lg" style="opacity:.7">จางลง = เสร็จแล้ว</span>`;
 }
 
 function renderTimeline(){
-  const today = new Date().toISOString().slice(0,10);
-  document.getElementById('tl-month-label').textContent = `${TH_MONTHS_FULL[tlMonth]} ${tlYear+543}`;
+  const today = todayStr();
+  document.getElementById('tl-label').textContent = `${TH_MO_FULL[tlMonth]} ${tlYear+543}`;
 
-  const firstDay    = new Date(tlYear, tlMonth, 1).getDay();
-  const daysInMonth = new Date(tlYear, tlMonth+1, 0).getDate();
-  const prevDays    = new Date(tlYear, tlMonth, 0).getDate();
-
-  const CAR_COLORS = ['#1a4a8a','#1a7a4a','#5b21b6','#b45309','#c0392b'];
-
+  const first = new Date(tlYear, tlMonth, 1).getDay();
+  const dim   = new Date(tlYear, tlMonth+1, 0).getDate();
+  const prev  = new Date(tlYear, tlMonth, 0).getDate();
+  const MAX   = 3;
   let cells = '';
 
-  // วันจากเดือนก่อน
-  for(let i=0; i<firstDay; i++){
-    const d = prevDays - firstDay + i + 1;
-    cells += `<div style="min-height:110px;padding:6px 8px;border-bottom:0.5px solid var(--bdr);border-right:0.5px solid var(--bdr);background:var(--sur2);">
-      <div style="font-size:13px;color:var(--mut);opacity:.5">${d}</div>
+  for (let i = 0; i < first; i++)
+    cells += `<div class="cd out"><div class="cd-h"><span class="cd-n">${prev - first + i + 1}</span></div></div>`;
+
+  for (let d = 1; d <= dim; d++) {
+    const ds  = `${tlYear}-${String(tlMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dow = new Date(tlYear, tlMonth, d).getDay();
+    const bks = bkOnDate(ds);
+
+    let ev = bks.slice(0, MAX).map(bk => {
+      const car = db.cars.find(c => c.id === bk.carId);
+      const c = bkColor(bk);
+      const isStart = d10(bk.start) === ds;
+      return `<div class="ev" style="background:${c}18;border-color:${c};color:${c};opacity:${bkFade(bk)}">${isStart?'●&nbsp;':''}${esc(bk.team)}${car?' · '+esc(car.name):''}</div>`;
+    }).join('');
+    if (bks.length > MAX) ev += `<div class="ev-more">+${bks.length - MAX} รายการ</div>`;
+    const dots = bks.slice(0,6).map(bk => `<i style="background:${bkColor(bk)};opacity:${bkFade(bk)}"></i>`).join('');
+
+    cells += `<div class="cd${dow===0||dow===6?' we':''}${ds===today?' today':''}" onclick="showDayDetail('${ds}')">
+      <div class="cd-h"><span class="cd-n">${d}</span>${bks.length?`<span class="cd-c">${bks.length}</span>`:''}</div>
+      ${ev}<div class="dots">${dots}</div>
     </div>`;
   }
 
-  // วันในเดือนนี้
-  for(let d=1; d<=daysInMonth; d++){
-    const dateStr = `${tlYear}-${String(tlMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const dow     = new Date(dateStr).getDay();
-    const isToday = dateStr === today;
-    const isWkend = dow===0||dow===6;
+  const tail = (first + dim) % 7 === 0 ? 0 : 7 - ((first + dim) % 7);
+  for (let i = 1; i <= tail; i++)
+    cells += `<div class="cd out"><div class="cd-h"><span class="cd-n">${i}</span></div></div>`;
 
-    const bookings = db.bookings.filter(b=>{
-      if(b.status==='cancelled') return false;
-      const bs=String(b.start||'').slice(0,10);
-      const be=String(b.end||'').slice(0,10);
-      return dateStr>=bs && dateStr<=be;
-    });
-
-    const MAX = 3;
-    let evHtml = '';
-    bookings.slice(0,MAX).forEach(bk=>{
-      const car   = db.cars.find(c=>c.id===bk.carId);
-      const ci    = db.cars.findIndex(c=>c.id===bk.carId);
-      const color = bk.status==='done' ? '#1a7a4a' : CAR_COLORS[ci % CAR_COLORS.length] || '#1a4a8a';
-      const isStart = String(bk.start||'').slice(0,10) === dateStr;
-      evHtml += `<div onclick="event.stopPropagation();showDayDetail('${dateStr}')" style="
-        background:${color}18;border-left:3px solid ${color};border-radius:3px;
-        padding:2px 5px;margin-bottom:2px;font-size:11px;color:${color};
-        font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;">
-        ${isStart?'●&nbsp;':''}${bk.team}${car?` · ${car.name}`:''}
-      </div>`;
-    });
-    if(bookings.length > MAX){
-      evHtml += `<div onclick="event.stopPropagation();showDayDetail('${dateStr}')"
-        style="font-size:10px;color:var(--mut);cursor:pointer;padding:1px 4px;">
-        +${bookings.length-MAX} รายการ</div>`;
-    }
-
-    const cellBg = isToday ? 'var(--byb)' : isWkend ? 'rgba(0,0,0,.02)' : 'var(--sur)';
-    const cellBgHover = isToday ? '#d0e4ff' : 'var(--sur2)';
-
-    cells += `<div onclick="showDayDetail('${dateStr}')"
-      style="min-height:110px;padding:6px 8px;
-        border-bottom:0.5px solid var(--bdr);border-right:0.5px solid var(--bdr);
-        background:${cellBg};cursor:pointer;transition:background .12s;"
-      onmouseenter="this.style.background='${cellBgHover}'"
-      onmouseleave="this.style.background='${cellBg}'">
-      <div style="margin-bottom:5px;display:flex;align-items:center;justify-content:space-between;">
-        <span style="
-          font-size:13px;font-weight:${isToday?700:400};
-          color:${isToday?'#fff':isWkend?'var(--dn)':'var(--txt)'};
-          ${isToday?'background:var(--by);border-radius:50%;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;':''}
-        ">${d}</span>
-        ${bookings.length>0?`<span style="font-size:9px;font-family:var(--mono);background:var(--byb);color:var(--by);padding:1px 5px;border-radius:10px">${bookings.length}</span>`:''}
-      </div>
-      ${evHtml}
-    </div>`;
-  }
-
-  // วันจากเดือนถัดไป
-  const total = firstDay + daysInMonth;
-  const tail  = total%7===0 ? 0 : 7-(total%7);
-  for(let i=1; i<=tail; i++){
-    cells += `<div style="min-height:110px;padding:6px 8px;border-bottom:0.5px solid var(--bdr);border-right:0.5px solid var(--bdr);background:var(--sur2);">
-      <div style="font-size:13px;color:var(--mut);opacity:.5">${i}</div>
-    </div>`;
-  }
-
-  document.getElementById('tl-cal-grid').innerHTML = cells;
+  document.getElementById('tl-grid').innerHTML = cells;
+  renderLegend();
+  renderAgenda();
 }
 
-function showDayDetail(dateStr){
-  const bookings = getBookingsOnDate(dateStr);
-  document.getElementById('tl-day-title').textContent = fdate(dateStr);
+function renderAgenda(){
+  const ms = `${tlYear}-${String(tlMonth+1).padStart(2,'0')}`;
+  const list = db.bookings
+    .filter(b => b.status !== 'cancelled' &&
+      d10(b.start).slice(0,7) <= ms && d10(b.end).slice(0,7) >= ms)
+    .sort((a,b) => d10(a.start).localeCompare(d10(b.start)));
 
-  const CAR_COLORS = ['#1a4a8a','#1a7a4a','#5b21b6','#b45309','#c0392b'];
-  const statusTh = { active:'กำลังใช้', done:'เสร็จแล้ว', cancelled:'ยกเลิก' };
-
-  if(!bookings.length){
-    document.getElementById('tl-day-events').innerHTML = '<div class="empty" style="padding:20px">ไม่มีการจองในวันนี้</div>';
-  } else {
-    document.getElementById('tl-day-events').innerHTML = bookings.map((bk,i)=>{
-      const car = db.cars.find(c=>c.id===bk.carId);
-      const color = bk.status==='done'?'#1a7a4a': CAR_COLORS[db.cars.findIndex(c=>c.id===bk.carId) % CAR_COLORS.length];
-      return `<div style="border-left:3px solid ${color};padding:10px 12px;border-radius:6px;background:${color}11;margin-bottom:10px;">
-        <div style="font-size:14px;font-weight:600;color:${color};margin-bottom:4px">${bk.team}</div>
-        <div style="font-size:13px;margin-bottom:4px">🚗 ${car?.name||'—'} <span style="font-family:var(--mono);font-size:11px;color:var(--mut)">${car?.plate||''}</span></div>
-        <div style="font-size:12px;color:var(--mut);margin-bottom:2px">📍 ${bk.mission}</div>
-        <div style="font-size:12px;color:var(--mut);margin-bottom:2px">📅 ${fdate(String(bk.start).slice(0,10))} → ${fdate(String(bk.end).slice(0,10))}</div>
-        <div style="font-size:12px;color:var(--mut)">👥 ${bk.headcount} คน</div>
-        <div style="margin-top:6px"><span class="pill ${bk.status==='active'?'p-busy':bk.status==='done'?'p-ok':'p-warn'}">${statusTh[bk.status]||bk.status}</span></div>
-      </div>`;
-    }).join('');
+  const el = document.getElementById('tl-agenda');
+  if (!list.length) {
+    el.innerHTML = `<div class="agenda-d">รายการเดือนนี้</div><div class="empty">ไม่มีการจองในเดือนนี้</div>`;
+    return;
   }
+  el.innerHTML = `<div class="agenda-d">รายการเดือนนี้ · ${list.length} รายการ</div><div class="lst">` +
+    list.map(bk => {
+      const car = db.cars.find(c => c.id === bk.carId);
+      const c = bkColor(bk);
+      return `<div class="li" onclick="showDayDetail('${d10(bk.start)}')" style="cursor:pointer">
+        <span style="width:4px;align-self:stretch;border-radius:3px;background:${c};opacity:${bkFade(bk)};flex-shrink:0"></span>
+        <div class="li-m"><div class="li-t">${esc(bk.team)} <span style="font-weight:400;color:var(--text-2)">· ${esc(car?.name||'—')}</span></div>
+          <div class="li-s">${esc(bk.mission)}</div></div>
+        <div class="li-r"><div class="li-d">${fdate(bk.start)}</div><div class="li-d">→ ${fdate(bk.end)}</div></div>
+      </div>`;
+    }).join('') + `</div>`;
+}
+
+function showDayDetail(ds){
+  const bks = bkOnDate(ds);
+  document.getElementById('tl-day-title').textContent = fdate(ds);
+  const statusTh = { active:'กำลังใช้', done:'เสร็จแล้ว', cancelled:'ยกเลิก' };
+  const pm = { active:'p-busy', done:'p-ok', cancelled:'p-mut' };
+
+  document.getElementById('tl-day-events').innerHTML = !bks.length
+    ? '<div class="empty">ไม่มีการจองในวันนี้</div>'
+    : bks.map(bk => {
+        const car = db.cars.find(c => c.id === bk.carId);
+        const c = bkColor(bk);
+        return `<div style="border-left:3px solid ${c};padding:12px 14px;border-radius:0 10px 10px 0;background:${c}12;margin-bottom:10px">
+          <div style="font-size:15px;font-weight:700;color:${c};margin-bottom:5px">${esc(bk.team)}</div>
+          <div style="font-size:13.5px;margin-bottom:3px">🚗 ${esc(car?.name||'—')} <span class="num" style="font-size:11px;color:var(--text-3)">${esc(car?.plate||'')}</span></div>
+          <div class="li-s">📍 ${esc(bk.mission)}</div>
+          <div class="li-s">📅 ${fdate(bk.start)} → ${fdate(bk.end)}</div>
+          <div class="li-s">👥 ${esc(bk.headcount)} คน</div>
+          <div style="margin-top:8px"><span class="pill ${pm[bk.status]||'p-mut'}">${statusTh[bk.status]||esc(bk.status)}</span></div>
+        </div>`;
+      }).join('');
 
   openModal('tl-day-modal');
 }
 
+/* ═══════════════════════════════════════════════
+   NAV / MODAL / SUBTAB
+   ═══════════════════════════════════════════════ */
+function buildNav(){
+  document.getElementById('btmnav').innerHTML = NAV.map(n =>
+    `<button class="bn" data-nav="${n.id}" onclick="go('${n.id}')">
+      <span class="bn-ic">${n.ic}</span><span class="bn-lb">${n.lb}</span>
+      <span class="bn-badge" data-badge="${n.id}" style="display:none"></span>
+    </button>`).join('');
+  document.getElementById('dtabs').innerHTML = NAV.map(n =>
+    `<button class="dtab" data-dtab="${n.id}" onclick="go('${n.id}')">${n.d}</button>`).join('');
+}
 
+function renderNavBadges(){
+  const active = db.bookings.filter(b => b.status === 'active').length;
+  const b = document.querySelector('[data-badge="book"]');
+  if (b) { b.style.display = active ? 'flex' : 'none'; b.textContent = active; }
+}
+
+function go(name){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.getElementById('page-' + name)?.classList.add('on');
+  document.querySelectorAll('[data-nav]').forEach(b => b.classList.toggle('on', b.dataset.nav === name));
+  document.querySelectorAll('[data-dtab]').forEach(b => b.classList.toggle('on', b.dataset.dtab === name));
+  document.getElementById('admin-btn').classList.toggle('on', name === 'admin');
+  window.scrollTo({ top:0, behavior:'instant' });
+  if (name === 'book')     renderPicks();
+  if (name === 'history')  initHistory();
+  if (name === 'timeline') renderTimeline();
+}
+
+function subTab(group, idx){
+  const tabs   = document.querySelectorAll(`#page-${{bk:'book',lg:'log',ad:'admin'}[group]} .stab`);
+  const panels = document.querySelectorAll(`[data-sub="${group}"]`);
+  tabs.forEach((t,i) => t.classList.toggle('on', i === idx));
+  panels.forEach((p,i) => p.classList.toggle('on', i === idx));
+}
+
+function openModal(id){ document.getElementById(id).classList.add('show'); document.body.style.overflow='hidden'; }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); document.body.style.overflow=''; }
+
+document.querySelectorAll('.mbg').forEach(bg => {
+  bg.addEventListener('click', e => { if (e.target === bg) closeModal(bg.id); });
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.mbg.show').forEach(m => closeModal(m.id));
+});
+['b-start','b-end'].forEach(id => document.getElementById(id)?.addEventListener('change', renderPicks));
+['hist-from','hist-to','hist-car','hist-team','hist-type'].forEach(id =>
+  document.getElementById(id)?.addEventListener('change', renderHistory));
+document.getElementById('disp-km').addEventListener('keydown', e => { if (e.key === 'Enter') calcDispatch(); });
+
+/* ═══════════════════════════════════════════════
+   BOOT
+   ═══════════════════════════════════════════════ */
+buildNav();
+go('status');
 document.getElementById('api-url-input').value = API_URL;
-renderCfgBanner();
+renderAlerts();
 loadAll();
 </script>
 </body>
